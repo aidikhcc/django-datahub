@@ -1,6 +1,43 @@
+# Database
 django-mssql-backend
+pyodbc
+
+# Azure Integration
 azure-identity
 azure-keyvault-secrets
-pyodbc
+
+# Django and Core Dependencies
+Django>=4.2
+django-debug-toolbar
+django-filter
+django-cors-headers
+
+# Authentication
 cryptography
-optimus_ids 
+msal
+
+# Forms and UI
+django-select2
+django-widget-tweaks
+
+# Date/Time Handling
+python-dateutil
+pytz
+
+# Development Tools
+black
+flake8
+pytest
+pytest-django
+
+# Utilities
+python-dotenv
+requests
+optimus_ids
+
+# Excel Support (for exports)
+openpyxl
+xlsxwriter
+
+mssql-django==1.3
+python-optimus
