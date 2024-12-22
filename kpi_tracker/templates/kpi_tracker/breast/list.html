@@ -1,0 +1,589 @@
+{% extends 'kpi_tracker/breast/base.html' %}
+
+{% load kpi_filters %}
+
+
+
+{% block breast_content %}
+
+<div class="container">
+
+    <h2 class="mb-4">All KPI Entries</h2>
+
+    <!-- Summary Cards -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card border-primary">
+
+                <div class="card-body">
+
+                    <h5 class="card-title text-primary">Total Completed</h5>
+
+                    <p class="card-text display-6">{{ totals.completed }}</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-warning">
+
+                <div class="card-body">
+
+                    <h5 class="card-title text-warning">Total Pending</h5>
+
+                    <p class="card-text display-6">{{ totals.pending }}</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-info">
+
+                <div class="card-body">
+
+                    <h5 class="card-title text-info">New in Last 7 Days</h5>
+
+                    <p class="card-text display-6">{{ totals.new_entries }}</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-success">
+
+                <div class="card-body">
+
+                    <h5 class="card-title text-success">Total Entries</h5>
+
+                    <p class="card-text display-6">{{ totals.total }}</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="d-flex justify-content-end mb-3">
+
+        <a href="?download=csv" class="btn btn-primary">Download CSV</a>
+
+    </div>
+
+
+
+    <!-- Pending Entries -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+
+            <h4 class="card-title mb-0">Pending Entries</h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-striped">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>MRN</th>
+
+                            <th>Entry Date</th>
+
+                            <th>Gender</th>
+
+                            <th>Age</th>
+
+                            <th>Nationality</th>
+
+                            <th>CPG Status</th>
+
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for entry in pending_entries %}
+
+                        <tr>
+
+                            <td>{{ entry.MRN }}</td>
+
+                            <td>{{ entry.entry_ts|date:"Y-m-d" }}</td>
+
+                            <td>{{ entry.Gender|default:"-" }}</td>
+
+                            <td>{{ entry.Age|default:"-" }}</td>
+
+                            <td>{{ entry.Nationality|default:"-" }}</td>
+
+                            <td>{{ entry.Patient_on_CPG|default:"-" }}</td>
+
+                            <td>
+
+                                <a href="{% url 'kpi_tracker:breast_form_edit' entry.MRN %}" 
+
+                                   class="btn btn-sm btn-primary">View/Edit</a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="7" class="text-center">No pending entries</td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Completed Entries -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h4 class="card-title mb-0">
+
+                    <button class="btn btn-link text-decoration-none p-0" 
+
+                            data-bs-toggle="collapse" 
+
+                            data-bs-target="#completedEntries" 
+
+                            aria-expanded="false" 
+
+                            aria-controls="completedEntries">
+
+                        <i class="fas fa-chevron-right me-2"></i>
+
+                        Completed Entries
+
+                        <span class="badge bg-secondary ms-2">{{ completed_entries|length }}</span>
+
+                    </button>
+
+                </h4>
+
+            </div>
+
+        </div>
+
+        <div id="completedEntries" class="collapse">
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>MRN</th>
+
+                                <th>Entry Date</th>
+
+                                <th>
+
+                                    Time to Start Treatment
+
+                                    <i class="fas fa-info-circle" 
+
+                                       data-bs-toggle="tooltip" 
+
+                                       data-bs-html="true"
+
+                                       title="<strong>Definition:</strong> {{ kpi_definitions.treatment_start.definition }}"></i>
+
+                                </th>
+
+                                <th>Surgery After Neoadjuvant <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-html="true" title="<strong>Definition:</strong> {{ kpi_definitions.surgery.definition }}"></i></th>
+
+                                <th>Radiotherapy After Surgery <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-html="true" title="<strong>Definition:</strong> {{ kpi_definitions.radiotherapy.definition }}"></i></th>
+
+                                <th>Biopsy TAT <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-html="true" title="<strong>Definition:</strong> {{ kpi_definitions.biopsy.definition }}"></i></th>
+
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for entry in completed_entries %}
+
+                            <tr>
+
+                                <td>{{ entry.MRN }}</td>
+
+                                <td>{{ entry.entry_ts|date:"Y-m-d" }}</td>
+
+                                <td>
+
+                                    {% if not entry.Treatment_NotFitForThisKPI %}
+
+                                        {% if entry.Insurance_date and entry.Treatment_date %}
+
+                                            {% with days=entry.Treatment_date|days_between:entry.Insurance_date %}
+
+                                                {% if days %}
+
+                                                    {% if days <= 31 %}
+
+                                                        <span class="badge bg-success">Within 1 month ({{ days }} days)</span>
+
+                                                    {% else %}
+
+                                                        <span class="badge bg-danger">Over 1 month ({{ days }} days)</span>
+
+                                                    {% endif %}
+
+                                                {% else %}
+
+                                                    <span class="badge bg-secondary">N/A</span>
+
+                                                {% endif %}
+
+                                            {% endwith %}
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">N/A</span>
+
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        <span class="badge bg-warning">Excluded</span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {% if not entry.Surgery_NotFitForThisKPI %}
+
+                                        {% if entry.surgery_status is not None %}
+
+                                            {% if entry.surgery_status %}
+
+                                                <span class="badge bg-success">Within 8 weeks</span>
+
+                                            {% else %}
+
+                                                <span class="badge bg-danger">Over 8 weeks</span>
+
+                                            {% endif %}
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">N/A</span>
+
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        <span class="badge bg-warning">Excluded</span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {% if not entry.Radio_NotFitForThisKPI %}
+
+                                        {% if entry.radio_status is not None %}
+
+                                            {% if entry.radio_status %}
+
+                                                <span class="badge bg-success">Within 8 weeks</span>
+
+                                            {% else %}
+
+                                                <span class="badge bg-danger">Over 8 weeks</span>
+
+                                            {% endif %}
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">N/A</span>
+
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        <span class="badge bg-warning">Excluded</span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td><span class="badge bg-secondary">N/A</span></td>
+
+                                <td>
+
+                                    <a href="{% url 'kpi_tracker:breast_form_edit' entry.MRN %}" 
+
+                                       class="btn btn-sm btn-primary">View/Edit</a>
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="6" class="text-center">No completed entries</td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<style>
+
+    .badge {
+
+        font-size: 0.75rem;
+
+        padding: 0.25rem 0.5rem;
+
+    }
+
+    .table td, .table th {
+
+        padding: 0.5rem;
+
+        font-size: 0.875rem;
+
+    }
+
+    .btn-sm {
+
+        padding: 0.25rem 0.5rem;
+
+        font-size: 0.75rem;
+
+    }
+
+    .tooltip-inner {
+
+        max-width: 200px;
+
+    }
+
+    .btn-link {
+
+        color: var(--khcc-primary);
+
+        font-weight: 600;
+
+    }
+
+    .btn-link:hover {
+
+        color: var(--khcc-primary-dark);
+
+    }
+
+    .btn-link i {
+
+        transition: transform 0.2s;
+
+    }
+
+    .btn-link[aria-expanded="true"] i {
+
+        transform: rotate(90deg);
+
+    }
+
+    .card {
+
+        border-width: 2px;
+
+        border-radius: 0.5rem;
+
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+
+        margin-bottom: 1rem;
+
+        background-color: white;
+
+    }
+
+    .card .display-6 {
+
+        font-size: 2.5rem;
+
+        font-weight: 500;
+
+        margin-bottom: 0;
+
+        color: #333;
+
+    }
+
+    .card .card-title {
+
+        font-size: 1rem;
+
+        font-weight: 500;
+
+        margin-bottom: 0.5rem;
+
+    }
+
+    .card .card-body {
+
+        padding: 1rem;
+
+    }
+
+    .border-primary {
+
+        border-color: #0d6efd !important;
+
+    }
+
+    .border-warning {
+
+        border-color: #ffc107 !important;
+
+    }
+
+    .border-info {
+
+        border-color: #0dcaf0 !important;
+
+    }
+
+    .border-success {
+
+        border-color: #198754 !important;
+
+    }
+
+    .text-primary {
+
+        color: #0d6efd !important;
+
+    }
+
+    .text-warning {
+
+        color: #ffc107 !important;
+
+    }
+
+    .text-info {
+
+        color: #0dcaf0 !important;
+
+    }
+
+    .text-success {
+
+        color: #198754 !important;
+
+    }
+
+</style>
+
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+
+    })
+
+});
+
+</script>
+
+{% endblock %} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

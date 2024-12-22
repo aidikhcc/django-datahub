@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">QMO Dashboard</h2>
+    
+    <!-- Summary Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Events</h5>
+                    <p class="card-text display-6">{{ total_events }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Events</h5>
+                    <p class="card-text display-6">{{ pending_events }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Completed Events</h5>
+                    <p class="card-text display-6">{{ completed_events }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Good Catch Events</h5>
+                    <p class="card-text display-6">{{ good_catch_events }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Categories -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Events by Category</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Events by Department</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="departmentChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Trends -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Monthly Event Trends</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Detailed Statistics -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Event Categories Breakdown</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Count</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in category_stats %}
+                            <tr>
+                                <td>{{ stat.category }}</td>
+                                <td>{{ stat.count }}</td>
+                                <td>{{ stat.percentage }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Department Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Department</th>
+                                <th>Events</th>
+                                <th>Pending</th>
+                                <th>Completed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in department_detailed_stats %}
+                            <tr>
+                                <td>{{ stat.department }}</td>
+                                <td>{{ stat.total }}</td>
+                                <td>{{ stat.pending }}</td>
+                                <td>{{ stat.completed }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+// Add Chart.js initialization code here
+</script>
+{% endblock %}
+{% endblock %} 

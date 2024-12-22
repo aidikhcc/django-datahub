@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 text-center">
+            <h1>Event Reporting System</h1>
+            <p class="lead text-muted">Report and track events across KHCC</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Actions</h5>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'event_reporting:event_new' %}" class="btn btn-primary">
+                            Report New Event
+                        </a>
+                        <a href="{% url 'event_reporting:event_list' %}" class="btn btn-outline-primary">
+                            View All Events
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

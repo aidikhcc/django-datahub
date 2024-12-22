@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 text-center">
+            <h1>KPI Disease Management</h1>
+            <p class="lead text-muted">Track and manage disease-specific Key Performance Indicators</p>
+        </div>
+    </div>
+
+    <!-- Disease Cards -->
+    <div class="row justify-content-center">
+        <!-- Breast Cancer Card -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Breast Cancer</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Manage KPIs for breast cancer treatment and outcomes.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'kpi_tracker:breast_kpi_dashboard' %}" class="btn btn-primary">
+                            View Dashboard
+                        </a>
+                        <a href="{% url 'kpi_tracker:breast_form' %}" class="btn btn-outline-primary">
+                            Add New Entry
+                        </a>
+                        <a href="{% url 'kpi_tracker:breast_list' %}" class="btn btn-outline-primary">
+                            View All Entries
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    padding: 1rem 1.25rem;
+}
+
+.btn {
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+h1 {
+    color: #0d6efd;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.lead {
+    font-size: 1.1rem;
+    color: #6c757d;
+}
+</style>
+{% endblock %} 

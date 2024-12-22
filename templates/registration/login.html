@@ -1,0 +1,48 @@
+{% extends "kpi_tracker/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Login</h3>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="text-center">
+                        {% if is_azure_environment %}
+                            <a href="/.auth/login/aad" class="btn btn-primary">
+                                Login with Microsoft (Azure)
+                            </a>
+                        {% else %}
+                            <a href="https://login.microsoftonline.com/{{ tenant_id }}/oauth2/v2.0/authorize?client_id={{ client_id }}&response_type=code&redirect_uri={{ redirect_uri }}&response_mode=query&scope=openid%20profile%20email%20User.Read" 
+                               class="btn btn-primary">
+                                Login with Microsoft (Local)
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    {% if debug %}
+                    <div class="mt-4">
+                        <h4>Debug Information:</h4>
+                        <ul>
+                            <li>User Authenticated: {{ user_authenticated }}</li>
+                            <li>Session Next URL: {{ session_next }}</li>
+                            <li>Is Azure Environment: {{ is_azure_environment }}</li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

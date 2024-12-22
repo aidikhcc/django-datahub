@@ -1,0 +1,43 @@
+{% extends 'kpi_tracker/base.html' %}
+
+{% block content %}
+<h1>KPI Dashboard</h1>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <h3>Recent Entries</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Department</th>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in recent_entries %}
+                <tr>
+                    <td>{{ entry.date_recorded }}</td>
+                    <td>{{ entry.department.name }}</td>
+                    <td>{{ entry.metric.name }}</td>
+                    <td>{{ entry.value }} {{ entry.metric.unit }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="col-md-4">
+        <h3>Departments</h3>
+        <div class="list-group">
+            {% for department in departments %}
+            <a href="{% url 'kpi_tracker:department_metrics' department.id %}" 
+               class="list-group-item list-group-item-action">
+                {{ department.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

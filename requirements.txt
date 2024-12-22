@@ -1,0 +1,6 @@
+django-mssql-backend
+azure-identity
+azure-keyvault-secrets
+pyodbc
+cryptography
+optimus_ids 

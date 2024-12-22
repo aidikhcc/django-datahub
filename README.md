@@ -1,1 +1,1 @@
-# django-datahub
+# datahub

@@ -1,0 +1,68 @@
+{% extends 'kpi_tracker/breast/base.html' %}
+
+{% block breast_content %}
+<div class="container-fluid">
+    <!-- Summary Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-label">Total Cases</div>
+                <div class="metric-value">{{ analytics.total_cases }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-label">Pending Cases</div>
+                <div class="metric-value">{{ analytics.pending_cases }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-label">Completed Cases</div>
+                <div class="metric-value">{{ analytics.total_cases|sub:analytics.pending_cases }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Basic Stats Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">KPI Summary</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Target</th>
+                                    <th>Current Average</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Time to Treatment</td>
+                                    <td>31 days</td>
+                                    <td>{{ analytics.treatment_avg|floatformat:1 }} days</td>
+                                </tr>
+                                <tr>
+                                    <td>Time to Surgery</td>
+                                    <td>56 days</td>
+                                    <td>{{ analytics.surgery_avg|floatformat:1 }} days</td>
+                                </tr>
+                                <tr>
+                                    <td>Time to Radiotherapy</td>
+                                    <td>56 days</td>
+                                    <td>{{ analytics.radio_avg|floatformat:1 }} days</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

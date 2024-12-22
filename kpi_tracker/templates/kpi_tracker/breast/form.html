@@ -1,0 +1,743 @@
+{% extends 'kpi_tracker/breast/base.html' %}
+
+{% block breast_content %}
+<!-- Remove any top-level messages/notifications here -->
+
+<!-- Search Section -->
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row align-items-center">
+            <div class="col-md-4">
+                <label for="search_mrn" class="form-label">Search MRN</label>
+                <div class="input-group">
+                    <input type="text" 
+                           class="form-control" 
+                           id="search_mrn" 
+                           name="search_mrn" 
+                           value="{{ search_mrn|default:'' }}"
+                           placeholder="Enter MRN to search">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+            <div class="col-md-8">
+                {% if search_result %}
+                    <div class="alert alert-{{ search_result.type }} py-2 mb-0">
+                        {{ search_result.message }}
+                    </div>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Main Form -->
+<div class="card">
+    <div class="card-body">
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="MRN" value="{{ form.MRN.value|default:'' }}">
+            <input type="hidden" name="Pending-changed" id="pending-changed" value="0">
+            <input type="hidden" name="initial-pending" value="{{ instance.Pending|yesno:'true,false' }}">
+            <input type="hidden" name="current_pending_status" value="{{ instance.Pending|default:True|yesno:'true,false' }}">
+            
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="card-title mb-0">
+                    {% if form.instance.id %}Edit{% else %}New{% endif %} KPI Entry
+                </h2>
+                <div class="d-flex align-items-center">
+                    {% if form.MRN.value %}
+                        <span class="badge bg-primary me-3">MRN: {{ form.MRN.value }}</span>
+                    {% endif %}
+                    <div class="form-check form-switch">
+                        <input type="checkbox" 
+                               class="form-check-input" 
+                               id="id_Pending" 
+                               name="Pending" 
+                               {% if instance.id %}
+                                   {% if instance.Pending %}checked{% endif %}
+                               {% else %}
+                                   checked
+                               {% endif %}
+                               data-initial="{{ instance.Pending|yesno:'true,false' }}">
+                        <label class="form-check-label ms-2" for="id_Pending">
+                            Pending {% if instance.id %}(Current: {{ instance.Pending|yesno:'Yes,No' }}){% endif %}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- General Information -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">General Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Patient Info -->
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.Gender.id_for_label }}" class="form-label">Gender</label>
+                                {{ form.Gender }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.Age.id_for_label }}" class="form-label">Age</label>
+                                {{ form.Age }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.Nationality.id_for_label }}" class="form-label">Nationality</label>
+                                {{ form.Nationality }}
+                            </div>
+                        </div>
+
+                        <!-- Dates -->
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.Screening_date.id_for_label }}" class="form-label">Screening Date</label>
+                                {{ form.Screening_date }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.Insurance_date.id_for_label }}" class="form-label">Insurance Date</label>
+                                {{ form.Insurance_date }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.MDT_date.id_for_label }}" class="form-label">MDT Date</label>
+                                {{ form.MDT_date }}
+                            </div>
+                        </div>
+
+                        <!-- CPG Info -->
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.Patient_on_CPG.id_for_label }}" class="form-label">Patient on CPG</label>
+                                {{ form.Patient_on_CPG }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.CPG_No.id_for_label }}" class="form-label">CPG No</label>
+                                {{ form.CPG_No }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.CPG_Special_cause.id_for_label }}" class="form-label">CPG Special Cause</label>
+                                {{ form.CPG_Special_cause }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Staff Information -->
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.CNC_name.id_for_label }}" class="form-label">CNC Name</label>
+                                {{ form.CNC_name }}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.Oncologist_name.id_for_label }}" class="form-label">Oncologist Name</label>
+                                {{ form.Oncologist_name }}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.Surgeon_name.id_for_label }}" class="form-label">Surgeon Name</label>
+                                {{ form.Surgeon_name }}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.Radiotherapist_name.id_for_label }}" class="form-label">Radiotherapist Name</label>
+                                {{ form.Radiotherapist_name }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Treatment Information -->
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">Treatment Information</h3>
+                    <div class="form-check form-switch">
+                        {{ form.Treatment_NotFitForThisKPI }}
+                        <label class="form-check-label ms-2" for="{{ form.Treatment_NotFitForThisKPI.id_for_label }}">
+                            Not Fit For This KPI
+                        </label>
+                    </div>
+                </div>
+                <div class="card-body treatment-fields">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.Treatment_date.id_for_label }}" class="form-label">Treatment Date</label>
+                                {{ form.Treatment_date }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.Treatment_type.id_for_label }}" class="form-label">Treatment Type</label>
+                                {{ form.Treatment_type }}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="{{ form.Reason_for_the_delay.id_for_label }}" class="form-label">Reason for Delay</label>
+                                {{ form.Reason_for_the_delay }}
+                            </div>
+                        </div>
+                        <div class="col-12 screening-investigation-fields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="{{ form.Need_more_screening_investigation.id_for_label }}" class="form-label">Need More Screening Investigation</label>
+                                {{ form.Need_more_screening_investigation }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disease Specific KPIs -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Disease Specific KPIs</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Surgery Section -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4 class="card-title mb-0">Surgery Information</h4>
+                                    <div class="form-check form-switch">
+                                        {{ form.Surgery_NotFitForThisKPI }}
+                                        <label class="form-check-label ms-2" for="{{ form.Surgery_NotFitForThisKPI.id_for_label }}">
+                                            Not Fit For This KPI
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="card-body surgery-fields">
+                                    <div class="mb-3">
+                                        <label for="{{ form.Neoadju_Bfr_Surgery.id_for_label }}" class="form-label">Neoadjuvant Before Surgery</label>
+                                        {{ form.Neoadju_Bfr_Surgery }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="{{ form.Neoadjuvant_ctx_date.id_for_label }}" class="form-label">Neoadjuvant CTX Date</label>
+                                        {{ form.Neoadjuvant_ctx_date }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="{{ form.Surgery_date.id_for_label }}" class="form-label">Surgery Date</label>
+                                        {{ form.Surgery_date }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="{{ form.Surgeryneo_Delay_why.id_for_label }}" class="form-label">Surgery Delay Reason</label>
+                                        {{ form.Surgeryneo_Delay_why }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Radiotherapy Section -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4 class="card-title mb-0">Radiotherapy Information</h4>
+                                    <div class="form-check form-switch">
+                                        {{ form.Radio_NotFitForThisKPI }}
+                                        <label class="form-check-label ms-2" for="{{ form.Radio_NotFitForThisKPI.id_for_label }}">
+                                            Not Fit For This KPI
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="card-body radio-fields">
+                                    <div class="mb-3">
+                                        <label for="{{ form.Adjuvant_radiotherapy.id_for_label }}" class="form-label">Adjuvant Radiotherapy</label>
+                                        {{ form.Adjuvant_radiotherapy }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="{{ form.surgery_last_dose_adjuvant_chemotherapy_date.id_for_label }}" class="form-label">Surgery/Last Dose Date</label>
+                                        {{ form.surgery_last_dose_adjuvant_chemotherapy_date }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="{{ form.Radio_date.id_for_label }}" class="form-label">Radio Date</label>
+                                        {{ form.Radio_date }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="{{ form.Radio_delay_why.id_for_label }}" class="form-label">Radio Delay Reason</label>
+                                        {{ form.Radio_delay_why }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Follow-up Information -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Follow-up Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.Last_Follow_up_Date.id_for_label }}" class="form-label">Last Follow-up Date</label>
+                                {{ form.Last_Follow_up_Date }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.Next_Follow_up_Date.id_for_label }}" class="form-label">Next Follow-up Date</label>
+                                {{ form.Next_Follow_up_Date }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.Followup_remarks.id_for_label }}" class="form-label">Follow-up Remarks</label>
+                                {{ form.Followup_remarks }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-flex justify-content-end">
+                <a href="{% url 'kpi_tracker:breast_kpi_dashboard' %}" class="btn btn-light me-2">Cancel</a>
+                <button type="submit" class="btn btn-primary" id="saveButton" disabled>Save KPI Entry</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Activity Log -->
+{% if activity_log %}
+<div class="card mt-4">
+    <div class="card-header">
+        <h4 class="card-title mb-0">Activity Log</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date/Time</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in activity_log %}
+                    <tr>
+                        <td>{{ log.ts|date:"Y-m-d H:i:s" }}</td>
+                        <td>{{ log.UserName }}</td>
+                        <td>{{ log.Type }}</td>
+                        <td>
+                            <span class="badge {% if log.Pending_Status == '1' %}bg-warning{% else %}bg-success{% endif %}">
+                                {% if log.Pending_Status == '1' %}Pending{% else %}Completed{% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.form-control, .form-select {
+    height: calc(2.2rem + 2px);
+    padding: 0.4rem 0.75rem;
+}
+
+.card {
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.03);
+    padding: 0.75rem 1.25rem;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.mb-3 {
+    margin-bottom: 0.75rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1rem !important;
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+textarea.form-control {
+    height: auto;
+    min-height: 80px;
+}
+
+/* Add compact spacing for form groups */
+.row > [class*="col-"] {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+.col-md-8 {
+    display: flex;
+    align-items: center;
+}
+
+.alert {
+    margin-left: 1rem;
+    font-size: 0.95rem;
+}
+
+.py-2 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
+</style>
+
+<!-- Keep your existing JavaScript -->
+<script>
+// Update the toggleFormFields function
+function toggleFormFields(checkbox) {
+    // Get all form inputs except CSRF token, MRN, Pending, and NotFitForThisKPI checkboxes
+    const formInputs = document.querySelectorAll(
+        'form[method="post"] input:not([name="csrfmiddlewaretoken"]):not([name="MRN"]):not([name="Pending"]):not([name$="NotFitForThisKPI"]), ' + 
+        'form[method="post"] select, ' + 
+        'form[method="post"] textarea'
+    );
+    
+    formInputs.forEach(input => {
+        if (checkbox.checked) {
+            // If pending, enable all fields
+            input.removeAttribute('readonly');
+            input.removeAttribute('disabled');
+            input.classList.remove('readonly-field');
+            
+            // For select elements, enable all options
+            if (input.tagName === 'SELECT') {
+                Array.from(input.options).forEach(option => {
+                    option.disabled = false;
+                });
+            }
+        } else {
+            // If not pending, make fields readonly/disabled
+            if (input.tagName === 'SELECT') {
+                input.disabled = true;
+            } else {
+                input.setAttribute('readonly', 'readonly');
+            }
+            input.classList.add('readonly-field');
+        }
+    });
+
+    // Handle NotFitForThisKPI checkboxes separately
+    const notFitCheckboxes = document.querySelectorAll('input[name$="NotFitForThisKPI"]');
+    notFitCheckboxes.forEach(checkbox => {
+        checkbox.disabled = !checkbox.checked;
+    });
+
+    // Always enable the save button
+    const saveButton = document.getElementById('saveButton');
+    if (saveButton) {
+        saveButton.disabled = false;
+    }
+}
+
+// Add styles for readonly fields
+const style = document.createElement('style');
+style.textContent = `
+    .readonly-field {
+        background-color: #e9ecef !important;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+`;
+document.head.appendChild(style);
+
+// Initialize form state on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const pendingCheckbox = document.querySelector('input[name="Pending"]');
+    if (pendingCheckbox) {
+        const mrnField = document.querySelector('input[name="MRN"]');
+        const isNewEntry = !mrnField.value;
+        
+        // For new entries, set to checked
+        if (isNewEntry) {
+            pendingCheckbox.checked = true;
+        }
+        // For existing entries, use the data-initial value
+        else {
+            const initialState = pendingCheckbox.getAttribute('data-initial') === 'true';
+            pendingCheckbox.checked = initialState;
+        }
+        
+        // Set initial state
+        toggleFormFields(pendingCheckbox);
+        
+        // Add change event listener
+        pendingCheckbox.addEventListener('change', function() {
+            toggleFormFields(this);
+        });
+    }
+});
+
+// Update the form submission handler
+document.querySelector('form[method="post"]').addEventListener('submit', function(e) {
+    // Update current_pending_status before submission
+    const pendingCheckbox = document.querySelector('input[name="Pending"]');
+    const currentPendingInput = document.querySelector('input[name="current_pending_status"]');
+    if (currentPendingInput && pendingCheckbox) {
+        currentPendingInput.value = pendingCheckbox.checked ? 'true' : 'false';
+    }
+
+    // Remove readonly and disabled attributes before submission
+    this.querySelectorAll('[readonly], [disabled]').forEach(input => {
+        // Keep NotFitForThisKPI checkboxes disabled if they should be
+        if (!input.name.endsWith('NotFitForThisKPI')) {
+            input.removeAttribute('readonly');
+            input.removeAttribute('disabled');
+        }
+    });
+    
+    // Re-enable all select options before submission
+    this.querySelectorAll('select').forEach(select => {
+        select.disabled = false;
+        Array.from(select.options).forEach(option => {
+            option.disabled = false;
+        });
+    });
+});
+
+// Update the search handling section
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.querySelector('form[method="get"]');
+    const mainForm = document.querySelector('form[method="post"]');
+    const saveButton = document.getElementById('saveButton');
+    const searchMrnInput = document.getElementById('search_mrn');
+
+    // Enable save button only if MRN is present
+    function updateSaveButtonState() {
+        const mrnField = document.querySelector('input[name="MRN"]');
+        saveButton.disabled = !mrnField.value;
+    }
+
+    // Initialize button state
+    updateSaveButtonState();
+
+    // Handle search form submission
+    searchForm.addEventListener('submit', function(e) {
+        if (!searchMrnInput.value.trim()) {
+            e.preventDefault();
+            alert('Please enter an MRN to search');
+        }
+    });
+
+    // If there's a URL parameter for search_mrn but no form MRN value,
+    // disable the form
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchMrn = urlParams.get('search_mrn');
+    const formMrn = document.querySelector('input[name="MRN"]').value;
+    
+    if (searchMrn && !formMrn) {
+        mainForm.querySelectorAll('input, select, textarea').forEach(element => {
+            element.disabled = true;
+        });
+    }
+});
+
+function toggleCPGFields(value) {
+    const cpgNoField = document.querySelector('select[name="CPG_No"]');
+    const cpgSpecialField = document.querySelector('select[name="CPG_Special_cause"]');
+    
+    // Disable both fields initially
+    cpgNoField.disabled = true;
+    cpgSpecialField.disabled = true;
+    
+    // Enable appropriate field based on selection
+    if (value === 'No') {
+        cpgNoField.disabled = false;
+    } else if (value === 'Special cause') {
+        cpgSpecialField.disabled = false;
+    }
+}
+
+// Initialize CPG fields on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const patientOnCPG = document.querySelector('select[name="Patient_on_CPG"]');
+    if (patientOnCPG) {
+        toggleCPGFields(patientOnCPG.value);
+    }
+});
+
+// Add these new functions
+function toggleTreatmentFields(checkbox) {
+    const treatmentFields = document.querySelectorAll('.treatment-fields input, .treatment-fields select, .treatment-fields textarea');
+    treatmentFields.forEach(field => {
+        field.disabled = checkbox.checked;
+    });
+}
+
+function toggleSurgeryFields(checkbox) {
+    const surgeryFields = document.querySelectorAll('.surgery-fields input, .surgery-fields select, .surgery-fields textarea');
+    surgeryFields.forEach(field => {
+        field.disabled = checkbox.checked;
+    });
+}
+
+function toggleRadioFields(checkbox) {
+    const radioFields = document.querySelectorAll('.radio-fields input, .radio-fields select, .radio-fields textarea');
+    radioFields.forEach(field => {
+        field.disabled = checkbox.checked;
+    });
+}
+
+// Initialize all toggles on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Existing initialization code...
+    
+    // Initialize Treatment NotFitForThisKPI
+    const treatmentNotFit = document.querySelector('input[name="Treatment_NotFitForThisKPI"]');
+    if (treatmentNotFit) {
+        treatmentNotFit.addEventListener('change', function() {
+            toggleTreatmentFields(this);
+        });
+        toggleTreatmentFields(treatmentNotFit);
+    }
+
+    // Initialize Surgery NotFitForThisKPI
+    const surgeryNotFit = document.querySelector('input[name="Surgery_NotFitForThisKPI"]');
+    if (surgeryNotFit) {
+        surgeryNotFit.addEventListener('change', function() {
+            toggleSurgeryFields(this);
+        });
+        toggleSurgeryFields(surgeryNotFit);
+    }
+
+    // Initialize Radio NotFitForThisKPI
+    const radioNotFit = document.querySelector('input[name="Radio_NotFitForThisKPI"]');
+    if (radioNotFit) {
+        radioNotFit.addEventListener('change', function() {
+            toggleRadioFields(this);
+        });
+        toggleRadioFields(radioNotFit);
+    }
+});
+
+// Update the pending change tracking
+document.addEventListener('DOMContentLoaded', function() {
+    const pendingCheckbox = document.querySelector('input[name="Pending"]');
+    const pendingChanged = document.getElementById('pending-changed');
+    const initialPendingInput = document.querySelector('input[name="initial-pending"]');
+    const currentPendingInput = document.querySelector('input[name="current_pending_status"]');
+    
+    if (pendingCheckbox && initialPendingInput && currentPendingInput) {
+        const initialPending = initialPendingInput.value === 'true';
+        
+        // Set initial current_pending_status
+        currentPendingInput.value = pendingCheckbox.checked ? 'true' : 'false';
+        
+        pendingCheckbox.addEventListener('change', function() {
+            // Update the pending-changed hidden input
+            pendingChanged.value = (this.checked !== initialPending) ? '1' : '0';
+            
+            // Update current_pending_status
+            currentPendingInput.value = this.checked ? 'true' : 'false';
+            
+            toggleFormFields(this);
+        });
+    }
+});
+
+// Add form submission debugging
+document.querySelector('form[method="post"]').addEventListener('submit', function(e) {
+
+    // Get all form data
+    const formData = new FormData(this);
+    for (let [key, value] of formData.entries()) {
+
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const reasonForDelaySelect = document.querySelector('select[name="Reason_for_the_delay"]');
+    const screeningInvestigationFields = document.querySelector('.screening-investigation-fields');
+    
+    function toggleScreeningInvestigation() {
+        if (reasonForDelaySelect.value === 'Need more screening investigation') {
+            screeningInvestigationFields.style.display = 'block';
+        } else {
+            screeningInvestigationFields.style.display = 'none';
+            // Clear the screening investigation selection when hidden
+            const screeningSelect = document.querySelector('select[name="Need_more_screening_investigation"]');
+            if (screeningSelect) {
+                screeningSelect.value = '';
+            }
+        }
+    }
+    
+    // Set initial state
+    if (reasonForDelaySelect) {
+        toggleScreeningInvestigation();
+        
+        // Add change event listener
+        reasonForDelaySelect.addEventListener('change', toggleScreeningInvestigation);
+    }
+});
+
+// Add this to your existing JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the Last Follow-up Date input
+    const lastFollowUpInput = document.querySelector('input[name="Last_Follow_up_Date"]');
+    
+    if (lastFollowUpInput) {
+        // Set max date to today
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const yyyy = today.getFullYear();
+        const maxDate = yyyy + '-' + mm + '-' + dd;
+        
+        // Set the max attribute
+        lastFollowUpInput.setAttribute('max', maxDate);
+        
+        // Add event listener to prevent future dates
+        lastFollowUpInput.addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            const currentDate = new Date();
+            
+            // Reset to today if future date is selected
+            if (selectedDate > currentDate) {
+                this.value = maxDate;
+                alert('Last Follow-up Date cannot be in the future');
+            }
+        });
+    }
+});
+</script>
+
+<!-- Add in head section -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Add at end of body -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+});
+</script>
+{% endblock %}

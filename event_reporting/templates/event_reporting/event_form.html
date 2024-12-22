@@ -1,0 +1,2241 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <!-- Search Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row align-items-center">
+                <div class="col-md-4">
+                    <label for="search_mrn" class="form-label">Search MRN</label>
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-control" 
+                               id="search_mrn" 
+                               name="search_mrn" 
+                               value="{{ search_mrn|default:'' }}" 
+                               placeholder="Enter MRN to search"
+                               autocomplete="off">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </div>
+                {% if search_result %}
+                    <div class="col-md-8">
+                        <div class="alert alert-{{ search_result.type }} py-2 mb-0">
+                            {{ search_result.message }}
+                        </div>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Form -->
+    <form method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Patient Information -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Patient Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">MRN</label>
+                            <input type="text" name="MRN" class="form-control" value="{{ event.MRN|default:'' }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Patient Name</label>
+                            <input type="text" name="patient_name" class="form-control" value="{{ event.patient_name|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" 
+                                   name="dob" 
+                                   class="form-control" 
+                                   value="{{ event.dob|date:'Y-m-d'|default:'' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Age</label>
+                            <input type="number" name="age" class="form-control" value="{{ event.age|default:'' }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-select">
+                                <option value="">Select Gender</option>
+                                <option value="Male" {% if event.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if event.gender == 'Female' %}selected{% endif %}>Female</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nationality</label>
+                            <select name="nationality" class="form-select">
+                                <option value="">Select Nationality</option>
+                                <option value="Jordanian" {% if event.nationality == 'Jordanian' %}selected{% endif %}>Jordanian</option>
+                                <option value="Non Jordanian" {% if event.nationality == 'Non Jordanian' %}selected{% endif %}>Non Jordanian</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            <label class="form-label">Floor/Unit</label>
+                            <select name="floor_unit" class="form-select">
+                                <option value="">Select Floor/Unit</option>
+                                <option value="Sheikh Khalifa 7th" {% if event.floor_unit == "Sheikh Khalifa 7th" %}selected{% endif %}>Sheikh Khalifa 7th</option>
+                                <option value="Sheikh Khalifa 6th" {% if event.floor_unit == "Sheikh Khalifa 6th" %}selected{% endif %}>Sheikh Khalifa 6th</option>
+                                <option value="Sheikh Khalifa 2nd" {% if event.floor_unit == "Sheikh Khalifa 2nd" %}selected{% endif %}>Sheikh Khalifa 2nd</option>
+                                <option value="Sheikh Khalifa 5th" {% if event.floor_unit == "Sheikh Khalifa 5th" %}selected{% endif %}>Sheikh Khalifa 5th</option>
+                                <option value="Nizar AL-Naqeeb 1st" {% if event.floor_unit == "Nizar AL-Naqeeb 1st" %}selected{% endif %}>Nizar AL-Naqeeb 1st</option>
+                                <option value="Sheikh Khalifa 8th" {% if event.floor_unit == "Sheikh Khalifa 8th" %}selected{% endif %}>Sheikh Khalifa 8th</option>
+                                <option value="Sheikh Khalifa 4th" {% if event.floor_unit == "Sheikh Khalifa 4th" %}selected{% endif %}>Sheikh Khalifa 4th</option>
+                                <option value="MAIN OFFICE" {% if event.floor_unit == "MAIN OFFICE" %}selected{% endif %}>MAIN OFFICE</option>
+                                <option value="Early Detection" {% if event.floor_unit == "Early Detection" %}selected{% endif %}>Early Detection</option>
+                                <option value="Nizar AL-Naqeeb 2nd" {% if event.floor_unit == "Nizar AL-Naqeeb 2nd" %}selected{% endif %}>Nizar AL-Naqeeb 2nd</option>
+                                <option value="EMPLOYEES CLINIC" {% if event.floor_unit == "EMPLOYEES CLINIC" %}selected{% endif %}>EMPLOYEES CLINIC</option>
+                                <option value="Nizar AL-Naqeeb Basmant" {% if event.floor_unit == "Nizar AL-Naqeeb Basmant" %}selected{% endif %}>Nizar AL-Naqeeb Basmant</option>
+                                <option value="Nizar Al Naqeeb" {% if event.floor_unit == "Nizar Al Naqeeb" %}selected{% endif %}>Nizar Al Naqeeb</option>
+                                <option value="King Salman GF" {% if event.floor_unit == "King Salman GF" %}selected{% endif %}>King Salman GF</option>
+                                <option value="Other" {% if event.floor_unit == "Other" %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Room</label>
+                            <input type="text" name="room" class="form-control" value="{{ event.room|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="mb-3">
+                            <label class="form-label">Diagnosis</label>
+                            <select name="diagnosis" class="form-select">
+                                <option value="">Select Diagnosis</option>
+                                <option value="Adult Leukemia" {% if event.diagnosis == 'Adult Leukemia' %}selected{% endif %}>Adult Leukemia</option>
+                                <option value="Adult Lymphoma" {% if event.diagnosis == 'Adult Lymphoma' %}selected{% endif %}>Adult Lymphoma</option>
+                                <option value="Adult Sarcoma" {% if event.diagnosis == 'Adult Sarcoma' %}selected{% endif %}>Adult Sarcoma</option>
+                                <option value="Aplastic anemia" {% if event.diagnosis == 'Aplastic anemia' %}selected{% endif %}>Aplastic anemia</option>
+                                <option value="Autoimmune lymphoproliferative syndrome" {% if event.diagnosis == 'Autoimmune lymphoproliferative syndrome' %}selected{% endif %}>Autoimmune lymphoproliferative syndrome</option>
+                                <option value="Bladder" {% if event.diagnosis == 'Bladder' %}selected{% endif %}>Bladder</option>
+                                <option value="BMT" {% if event.diagnosis == 'BMT' %}selected{% endif %}>BMT</option>
+                                <option value="Brain" {% if event.diagnosis == 'Brain' %}selected{% endif %}>Brain</option>
+                                <option value="Breast" {% if event.diagnosis == 'Breast' %}selected{% endif %}>Breast</option>
+                                <option value="Cervix" {% if event.diagnosis == 'Cervix' %}selected{% endif %}>Cervix</option>
+                                <option value="Cholangiocarcinoma" {% if event.diagnosis == 'Cholangiocarcinoma' %}selected{% endif %}>Cholangiocarcinoma</option>
+                                <option value="Chondrosarcoma" {% if event.diagnosis == 'Chondrosarcoma' %}selected{% endif %}>Chondrosarcoma</option>
+                                <option value="Choriocarcinoma" {% if event.diagnosis == 'Choriocarcinoma' %}selected{% endif %}>Choriocarcinoma</option>
+                                <option value="Chronic granulomatous disease" {% if event.diagnosis == 'Chronic granulomatous disease' %}selected{% endif %}>Chronic granulomatous disease</option>
+                                <option value="CNS" {% if event.diagnosis == 'CNS' %}selected{% endif %}>CNS</option>
+                                <option value="Colon" {% if event.diagnosis == 'Colon' %}selected{% endif %}>Colon</option>
+                                <option value="Donor" {% if event.diagnosis == 'Donor' %}selected{% endif %}>Donor</option>
+                                <option value="Endometrial" {% if event.diagnosis == 'Endometrial' %}selected{% endif %}>Endometrial</option>
+                                <option value="Esophageal" {% if event.diagnosis == 'Esophageal' %}selected{% endif %}>Esophageal</option>
+                                <option value="Faconi anemia" {% if event.diagnosis == 'Faconi anemia' %}selected{% endif %}>Faconi anemia</option>
+                                <option value="Gastric" {% if event.diagnosis == 'Gastric' %}selected{% endif %}>Gastric</option>
+                                <option value="GermCell" {% if event.diagnosis == 'GermCell' %}selected{% endif %}>GermCell</option>
+                                <option value="Gestational choriocarcinoma" {% if event.diagnosis == 'Gestational choriocarcinoma' %}selected{% endif %}>Gestational choriocarcinoma</option>
+                                <option value="GIST" {% if event.diagnosis == 'GIST' %}selected{% endif %}>GIST</option>
+                                <option value="Glioblastoma" {% if event.diagnosis == 'Glioblastoma' %}selected{% endif %}>Glioblastoma</option>
+                                <option value="GVHD" {% if event.diagnosis == 'GVHD' %}selected{% endif %}>GVHD</option>
+                                <option value="Hepatoblastoma" {% if event.diagnosis == 'Hepatoblastoma' %}selected{% endif %}>Hepatoblastoma</option>
+                                <option value="Immune deficiency" {% if event.diagnosis == 'Immune deficiency' %}selected{% endif %}>Immune deficiency</option>
+                                <option value="IntraOcular Retinoblastoma" {% if event.diagnosis == 'IntraOcular Retinoblastoma' %}selected{% endif %}>IntraOcular Retinoblastoma</option>
+                                <option value="Kidney" {% if event.diagnosis == 'Kidney' %}selected{% endif %}>Kidney</option>
+                                <option value="Laryngyal" {% if event.diagnosis == 'Laryngyal' %}selected{% endif %}>Laryngyal</option>
+                                <option value="Lung" {% if event.diagnosis == 'Lung' %}selected{% endif %}>Lung</option>
+                                <option value="MDS" {% if event.diagnosis == 'MDS' %}selected{% endif %}>MDS</option>
+                                <option value="Medulloblastoma" {% if event.diagnosis == 'Medulloblastoma' %}selected{% endif %}>Medulloblastoma</option>
+                                <option value="Melanoma" {% if event.diagnosis == 'Melanoma' %}selected{% endif %}>Melanoma</option>
+                                <option value="Meningioma" {% if event.diagnosis == 'Meningioma' %}selected{% endif %}>Meningioma</option>
+                                <option value="Mesenteric Neoplasm" {% if event.diagnosis == 'Mesenteric Neoplasm' %}selected{% endif %}>Mesenteric Neoplasm</option>
+                                <option value="MM" {% if event.diagnosis == 'MM' %}selected{% endif %}>MM</option>
+                                <option value="Myelodysplastic syndrome" {% if event.diagnosis == 'Myelodysplastic syndrome' %}selected{% endif %}>Myelodysplastic syndrome</option>
+                                <option value="Myelofibrosis" {% if event.diagnosis == 'Myelofibrosis' %}selected{% endif %}>Myelofibrosis</option>
+                                <option value="Nasopharyngeal" {% if event.diagnosis == 'Nasopharyngeal' %}selected{% endif %}>Nasopharyngeal</option>
+                                <option value="Neuroblastoma" {% if event.diagnosis == 'Neuroblastoma' %}selected{% endif %}>Neuroblastoma</option>
+                                <option value="Neurocytoma" {% if event.diagnosis == 'Neurocytoma' %}selected{% endif %}>Neurocytoma</option>
+                                <option value="Neuroendocrine tumor" {% if event.diagnosis == 'Neuroendocrine tumor' %}selected{% endif %}>Neuroendocrine tumor</option>
+                                <option value="Non KHCC" {% if event.diagnosis == 'Non KHCC' %}selected{% endif %}>Non KHCC</option>
+                                <option value="Oropharyngeal" {% if event.diagnosis == 'Oropharyngeal' %}selected{% endif %}>Oropharyngeal</option>
+                                <option value="Ovarian" {% if event.diagnosis == 'Ovarian' %}selected{% endif %}>Ovarian</option>
+                                <option value="Palate" {% if event.diagnosis == 'Palate' %}selected{% endif %}>Palate</option>
+                                <option value="Pancreatic" {% if event.diagnosis == 'Pancreatic' %}selected{% endif %}>Pancreatic</option>
+                                <option value="Parotid" {% if event.diagnosis == 'Parotid' %}selected{% endif %}>Parotid</option>
+                                <option value="Ped CNS embryonal tumors" {% if event.diagnosis == 'Ped CNS embryonal tumors' %}selected{% endif %}>Ped CNS embryonal tumors</option>
+                                <option value="Ped Leukemia" {% if event.diagnosis == 'Ped Leukemia' %}selected{% endif %}>Ped Leukemia</option>
+                                <option value="Ped Lymphoma" {% if event.diagnosis == 'Ped Lymphoma' %}selected{% endif %}>Ped Lymphoma</option>
+                                <option value="Ped Sarcomas" {% if event.diagnosis == 'Ped Sarcomas' %}selected{% endif %}>Ped Sarcomas</option>
+                                <option value="Ped.Nasopharingyal" {% if event.diagnosis == 'Ped.Nasopharingyal' %}selected{% endif %}>Ped.Nasopharingyal</option>
+                                <option value="Penile" {% if event.diagnosis == 'Penile' %}selected{% endif %}>Penile</option>
+                                <option value="PHC" {% if event.diagnosis == 'PHC' %}selected{% endif %}>PHC</option>
+                                <option value="Pheochromocytoma" {% if event.diagnosis == 'Pheochromocytoma' %}selected{% endif %}>Pheochromocytoma</option>
+                                <option value="Pituitary" {% if event.diagnosis == 'Pituitary' %}selected{% endif %}>Pituitary</option>
+                                <option value="Prostate" {% if event.diagnosis == 'Prostate' %}selected{% endif %}>Prostate</option>
+                                <option value="Rectal" {% if event.diagnosis == 'Rectal' %}selected{% endif %}>Rectal</option>
+                                <option value="Renal" {% if event.diagnosis == 'Renal' %}selected{% endif %}>Renal</option>
+                                <option value="Rhabdomyosarcoma" {% if event.diagnosis == 'Rhabdomyosarcoma' %}selected{% endif %}>Rhabdomyosarcoma</option>
+                                <option value="Seminoma" {% if event.diagnosis == 'Seminoma' %}selected{% endif %}>Seminoma</option>
+                                <option value="Sickle cell disease" {% if event.diagnosis == 'Sickle cell disease' %}selected{% endif %}>Sickle cell disease</option>
+                                <option value="Skin" {% if event.diagnosis == 'Skin' %}selected{% endif %}>Skin</option>
+                                <option value="Spinal" {% if event.diagnosis == 'Spinal' %}selected{% endif %}>Spinal</option>
+                                <option value="Submandibular tumor" {% if event.diagnosis == 'Submandibular tumor' %}selected{% endif %}>Submandibular tumor</option>
+                                <option value="Testicular" {% if event.diagnosis == 'Testicular' %}selected{% endif %}>Testicular</option>
+                                <option value="Thalassemia" {% if event.diagnosis == 'Thalassemia' %}selected{% endif %}>Thalassemia</option>
+                                <option value="Thyroid" {% if event.diagnosis == 'Thyroid' %}selected{% endif %}>Thyroid</option>
+                                <option value="Tongue" {% if event.diagnosis == 'Tongue' %}selected{% endif %}>Tongue</option>
+                                <option value="Tracheal" {% if event.diagnosis == 'Tracheal' %}selected{% endif %}>Tracheal</option>
+                                <option value="Unknown primary" {% if event.diagnosis == 'Unknown primary' %}selected{% endif %}>Unknown primary</option>
+                                <option value="Urothelial carcinoma" {% if event.diagnosis == 'Urothelial carcinoma' %}selected{% endif %}>Urothelial carcinoma</option>
+                                <option value="Uveal" {% if event.diagnosis == 'Uveal' %}selected{% endif %}>Uveal</option>
+                                <option value="Vulvar" {% if event.diagnosis == 'Vulvar' %}selected{% endif %}>Vulvar</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Information -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Event Information</h5>
+                <div class="d-flex align-items-center">
+                    <div class="form-check form-switch me-3">
+                        <input type="checkbox" 
+                               name="pending" 
+                               class="form-check-input" 
+                               id="pendingToggle" 
+                               {% if event.pending %}checked{% endif %}>
+                        <label class="form-check-label" for="pendingToggle">Pending</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input type="checkbox" 
+                               name="good_catch_event" 
+                               class="form-check-input" 
+                               id="goodCatchEvent" 
+                               {% if event.good_catch_event %}checked{% endif %}>
+                        <label class="form-check-label" for="goodCatchEvent">Good Catch Event</label>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Event Date</label>
+                            <input type="date" 
+                                   name="event_date" 
+                                   class="form-control" 
+                                   value="{{ event.event_date|date:'Y-m-d'|default:'' }}"
+                                   required>  <!-- Keep required if you want to enforce date entry -->
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Department Initiated the Event</label>
+                            <select name="department_initiated" class="form-select" required>
+                                <option value="">Select Department</option>
+                                <option value="Adult BMT clinic">Adult BMT clinic</option>
+                                <option value="Adult Chemotherapy Unit">Adult Chemotherapy Unit</option>
+                                <option value="Adult ER">Adult ER</option>
+                                <option value="Anesthesia">Anesthesia</option>
+                                <option value="Apheresis collection facility">Apheresis collection facility</option>
+                                <option value="Biomedical">Biomedical</option>
+                                <option value="BIU">BIU</option>
+                                <option value="Blood bank">Blood bank</option>
+                                <option value="BMT adult">BMT adult</option>
+                                <option value="BMT pediatric">BMT pediatric</option>
+                                <option value="Call center">Call center</option>
+                                <option value="Chemotherapy clinic">Chemotherapy clinic</option>
+                                <option value="Clinical program">Clinical program</option>
+                                <option value="CMO office">CMO office</option>
+                                <option value="Corridor">Corridor</option>
+                                <option value="CTAG BMT LAB (Processing Facility)">CTAG BMT LAB (Processing Facility)</option>
+                                <option value="Darwazah">Darwazah</option>
+                                <option value="Day case">Day case</option>
+                                <option value="Dialyses">Dialyses</option>
+                                <option value="Discharge planning office">Discharge planning office</option>
+                                <option value="Early detection clinic">Early detection clinic</option>
+                                <option value="Endoscopy">Endoscopy</option>
+                                <option value="Entrance">Entrance</option>
+                                <option value="General Adult Clinic">General Adult Clinic</option>
+                                <option value="Home care">Home care</option>
+                                <option value="Hospice/ Palliative service">Hospice/ Palliative service</option>
+                                <option value="ICU">ICU</option>
+                                <option value="ICU-Medical">ICU-Medical</option>
+                                <option value="ICU-Pediatric">ICU-Pediatric</option>
+                                <option value="IMU">IMU</option>
+                                <option value="Infection control">Infection control</option>
+                                <option value="Infusion unit">Infusion unit</option>
+                                <option value="Inpatient Pharmacy">Inpatient Pharmacy</option>
+                                <option value="Internal medicine">Internal medicine</option>
+                                <option value="International patient office">International patient office</option>
+                                <option value="Interventional">Interventional</option>
+                                <option value="IT">IT</option>
+                                <option value="Kitchen">Kitchen</option>
+                                <option value="Laboratory">Laboratory</option>
+                                <option value="Laundry">Laundry</option>
+                                <option value="Leukemia floor">Leukemia floor</option>
+                                <option value="Lung">Lung</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Marrow collection facility">Marrow collection facility</option>
+                                <option value="Material management">Material management</option>
+                                <option value="Medical floor">Medical floor</option>
+                                <option value="Medical Oncology Clinic">Medical Oncology Clinic</option>
+                                <option value="Medical records">Medical records</option>
+                                <option value="Medical surgical">Medical surgical</option>
+                                <option value="Non-KHCC location">Non-KHCC location</option>
+                                <option value="Nuclear Medicine">Nuclear Medicine</option>
+                                <option value="Nursing">Nursing</option>
+                                <option value="OR">OR</option>
+                                <option value="Out KHCC">Out KHCC</option>
+                                <option value="Out reach mobile BIU">Out reach mobile BIU</option>
+                                <option value="Outpatient clinic">Outpatient clinic</option>
+                                <option value="Outpatient Pharmacy">Outpatient Pharmacy</option>
+                                <option value="Palliative Clinic">Palliative Clinic</option>
+                                <option value="Patient affair office">Patient affair office</option>
+                                <option value="Patient application">Patient application</option>
+                                <option value="Patient complain office">Patient complain office</option>
+                                <option value="Pediatric BMT clinic">Pediatric BMT clinic</option>
+                                <option value="Pediatric Chemotherapy">Pediatric Chemotherapy</option>
+                                <option value="Pediatric Clinic">Pediatric Clinic</option>
+                                <option value="Pediatric ER">Pediatric ER</option>
+                                <option value="Pediatric floor">Pediatric floor</option>
+                                <option value="Pediatric surgery">Pediatric surgery</option>
+                                <option value="Pediatrics Service">Pediatrics Service</option>
+                                <option value="Pharmacy">Pharmacy</option>
+                                <option value="Physician">Physician</option>
+                                <option value="Physiotherapy">Physiotherapy</option>
+                                <option value="Play therapy room">Play therapy room</option>
+                                <option value="Purchasing">Purchasing</option>
+                                <option value="Quality Management">Quality Management</option>
+                                <option value="Radiology">Radiology</option>
+                                <option value="Radiotherapy">Radiotherapy</option>
+                                <option value="Radiotherapy technician">Radiotherapy technician</option>
+                                <option value="Respiratory therapy">Respiratory therapy</option>
+                                <option value="Safety">Safety</option>
+                                <option value="Screening clinic">Screening clinic</option>
+                                <option value="Security">Security</option>
+                                <option value="Social Workers/Psychology">Social Workers/Psychology</option>
+                                <option value="Solid Tumor Service">Solid Tumor Service</option>
+                                <option value="Surgeon">Surgeon</option>
+                                <option value="Surgical floor">Surgical floor</option>
+                                <option value="Surgical Service">Surgical Service</option>
+                                <option value="VAD">VAD</option>
+                                <option value="VIP">VIP</option>
+                                <option value="Waiting area">Waiting area</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Department Unit Involved</label>
+                            <select name="department_unit_involved" class="form-select">
+                                <option value="">Select Department Unit</option>
+                                <option value="Adult BMT clinic">Adult BMT clinic</option>
+                                <option value="Adult Chemotherapy Unit">Adult Chemotherapy Unit</option>
+                                <option value="Adult ER">Adult ER</option>
+                                <option value="Anesthesia">Anesthesia</option>
+                                <option value="Apheresis collection facility">Apheresis collection facility</option>
+                                <option value="Biomedical">Biomedical</option>
+                                <option value="BIU">BIU</option>
+                                <option value="Blood bank">Blood bank</option>
+                                <option value="BMT adult">BMT adult</option>
+                                <option value="BMT Clinic">BMT Clinic</option>
+                                <option value="BMT pediatric">BMT pediatric</option>
+                                <option value="BMT unit">BMT unit</option>
+                                <option value="Call center">Call center</option>
+                                <option value="Chemotherapy clinic">Chemotherapy clinic</option>
+                                <option value="Clinical program">Clinical program</option>
+                                <option value="CMO office">CMO office</option>
+                                <option value="Corridor">Corridor</option>
+                                <option value="CTAG BMT LAB (Processing Facility)">CTAG BMT LAB (Processing Facility)</option>
+                                <option value="Darwazah">Darwazah</option>
+                                <option value="Day case">Day case</option>
+                                <option value="Dialyses">Dialyses</option>
+                                <option value="Discharge planning office">Discharge planning office</option>
+                                <option value="Early detection clinic">Early detection clinic</option>
+                                <option value="Endoscopy">Endoscopy</option>
+                                <option value="Entrance">Entrance</option>
+                                <option value="ER">ER</option>
+                                <option value="General Adult Clinic">General Adult Clinic</option>
+                                <option value="Home care">Home care</option>
+                                <option value="Hospice/ Palliative service">Hospice/ Palliative service</option>
+                                <option value="ICU">ICU</option>
+                                <option value="ICU-Medical">ICU-Medical</option>
+                                <option value="ICU-Pediatric">ICU-Pediatric</option>
+                                <option value="IMU">IMU</option>
+                                <option value="Infection control">Infection control</option>
+                                <option value="Infusion unit">Infusion unit</option>
+                                <option value="Inpatient Pharmacy">Inpatient Pharmacy</option>
+                                <option value="Internal medicine">Internal medicine</option>
+                                <option value="International patient office">International patient office</option>
+                                <option value="Interventional">Interventional</option>
+                                <option value="IT">IT</option>
+                                <option value="Kitchen">Kitchen</option>
+                                <option value="Laboratory">Laboratory</option>
+                                <option value="Laundry">Laundry</option>
+                                <option value="Leukemia floor">Leukemia floor</option>
+                                <option value="Leukemia service">Leukemia service</option>
+                                <option value="Lung">Lung</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Marrow collection facility">Marrow collection facility</option>
+                                <option value="Material management">Material management</option>
+                                <option value="Medical floor">Medical floor</option>
+                                <option value="Medical Oncology Clinic">Medical Oncology Clinic</option>
+                                <option value="Medical records">Medical records</option>
+                                <option value="Medical surgical">Medical surgical</option>
+                                <option value="Non-KHCC location">Non-KHCC location</option>
+                                <option value="Nuclear Medicine">Nuclear Medicine</option>
+                                <option value="Nursing">Nursing</option>
+                                <option value="OR">OR</option>
+                                <option value="Out KHCC">Out KHCC</option>
+                                <option value="Out reach mobile BIU">Out reach mobile BIU</option>
+                                <option value="Outpatient clinic">Outpatient clinic</option>
+                                <option value="Outpatient Pharmacy">Outpatient Pharmacy</option>
+                                <option value="Palliative Clinic">Palliative Clinic</option>
+                                <option value="Patient affair office">Patient affair office</option>
+                                <option value="Patient application">Patient application</option>
+                                <option value="Patient complain office">Patient complain office</option>
+                                <option value="Pediatric BMT clinic">Pediatric BMT clinic</option>
+                                <option value="Pediatric Chemotherapy">Pediatric Chemotherapy</option>
+                                <option value="Pediatric Clinic">Pediatric Clinic</option>
+                                <option value="Pediatric ER">Pediatric ER</option>
+                                <option value="Pediatric floor">Pediatric floor</option>
+                                <option value="Pediatric surgery">Pediatric surgery</option>
+                                <option value="Pediatrics ER">Pediatrics ER</option>
+                                <option value="Pediatrics Service">Pediatrics Service</option>
+                                <option value="Pharmacy">Pharmacy</option>
+                                <option value="Physician">Physician</option>
+                                <option value="Physiotherapy">Physiotherapy</option>
+                                <option value="Play therapy room">Play therapy room</option>
+                                <option value="Pre admission unit">Pre admission unit</option>
+                                <option value="Purchasing">Purchasing</option>
+                                <option value="Quality Management">Quality Management</option>
+                                <option value="Radiology">Radiology</option>
+                                <option value="Radiotherapy">Radiotherapy</option>
+                                <option value="Radiotherapy technician">Radiotherapy technician</option>
+                                <option value="Respiratory therapy">Respiratory therapy</option>
+                                <option value="Safety">Safety</option>
+                                <option value="Screening clinic">Screening clinic</option>
+                                <option value="Security">Security</option>
+                                <option value="Social Workers/Psychology">Social Workers/Psychology</option>
+                                <option value="Solid Tumor Service">Solid Tumor Service</option>
+                                <option value="Surgeon">Surgeon</option>
+                                <option value="Surgical floor">Surgical floor</option>
+                                <option value="Surgical Service">Surgical Service</option>
+                                <option value="VAD">VAD</option>
+                                <option value="VIP">VIP</option>
+                                <option value="Waiting area">Waiting area</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Department Unit Involved 2</label>
+                            <select name="department_unit_involved_2" class="form-select">
+                                <option value="">Select Department Unit</option>
+                                <option value="Adult BMT clinic">Adult BMT clinic</option>
+                                <option value="Adult Chemotherapy Unit">Adult Chemotherapy Unit</option>
+                                <option value="Adult ER">Adult ER</option>
+                                <option value="Anesthesia">Anesthesia</option>
+                                <option value="Apheresis collection facility">Apheresis collection facility</option>
+                                <option value="Biomedical">Biomedical</option>
+                                <option value="BIU">BIU</option>
+                                <option value="Blood bank">Blood bank</option>
+                                <option value="BMT adult">BMT adult</option>
+                                <option value="BMT Clinic">BMT Clinic</option>
+                                <option value="BMT pediatric">BMT pediatric</option>
+                                <option value="BMT unit">BMT unit</option>
+                                <option value="Call center">Call center</option>
+                                <option value="Chemotherapy clinic">Chemotherapy clinic</option>
+                                <option value="Clinical program">Clinical program</option>
+                                <option value="CMO office">CMO office</option>
+                                <option value="Corridor">Corridor</option>
+                                <option value="CTAG BMT LAB (Processing Facility)">CTAG BMT LAB (Processing Facility)</option>
+                                <option value="Darwazah">Darwazah</option>
+                                <option value="Day case">Day case</option>
+                                <option value="Dialyses">Dialyses</option>
+                                <option value="Discharge planning office">Discharge planning office</option>
+                                <option value="Early detection clinic">Early detection clinic</option>
+                                <option value="Endoscopy">Endoscopy</option>
+                                <option value="Entrance">Entrance</option>
+                                <option value="ER">ER</option>
+                                <option value="General Adult Clinic">General Adult Clinic</option>
+                                <option value="Home care">Home care</option>
+                                <option value="Hospice/ Palliative service">Hospice/ Palliative service</option>
+                                <option value="ICU">ICU</option>
+                                <option value="ICU-Medical">ICU-Medical</option>
+                                <option value="ICU-Pediatric">ICU-Pediatric</option>
+                                <option value="IMU">IMU</option>
+                                <option value="Infection control">Infection control</option>
+                                <option value="Infusion unit">Infusion unit</option>
+                                <option value="Inpatient Pharmacy">Inpatient Pharmacy</option>
+                                <option value="Internal medicine">Internal medicine</option>
+                                <option value="International patient office">International patient office</option>
+                                <option value="Interventional">Interventional</option>
+                                <option value="IT">IT</option>
+                                <option value="Kitchen">Kitchen</option>
+                                <option value="Laboratory">Laboratory</option>
+                                <option value="Laundry">Laundry</option>
+                                <option value="Leukemia floor">Leukemia floor</option>
+                                <option value="Leukemia service">Leukemia service</option>
+                                <option value="Lung">Lung</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Marrow collection facility">Marrow collection facility</option>
+                                <option value="Material management">Material management</option>
+                                <option value="Medical floor">Medical floor</option>
+                                <option value="Medical Oncology Clinic">Medical Oncology Clinic</option>
+                                <option value="Medical records">Medical records</option>
+                                <option value="Medical surgical">Medical surgical</option>
+                                <option value="Non-KHCC location">Non-KHCC location</option>
+                                <option value="Nuclear Medicine">Nuclear Medicine</option>
+                                <option value="Nursing">Nursing</option>
+                                <option value="OR">OR</option>
+                                <option value="Out KHCC">Out KHCC</option>
+                                <option value="Out reach mobile BIU">Out reach mobile BIU</option>
+                                <option value="Outpatient clinic">Outpatient clinic</option>
+                                <option value="Outpatient Pharmacy">Outpatient Pharmacy</option>
+                                <option value="Palliative Clinic">Palliative Clinic</option>
+                                <option value="Patient affair office">Patient affair office</option>
+                                <option value="Patient application">Patient application</option>
+                                <option value="Patient complain office">Patient complain office</option>
+                                <option value="Pediatric BMT clinic">Pediatric BMT clinic</option>
+                                <option value="Pediatric Chemotherapy">Pediatric Chemotherapy</option>
+                                <option value="Pediatric Clinic">Pediatric Clinic</option>
+                                <option value="Pediatric ER">Pediatric ER</option>
+                                <option value="Pediatric floor">Pediatric floor</option>
+                                <option value="Pediatric surgery">Pediatric surgery</option>
+                                <option value="Pediatrics ER">Pediatrics ER</option>
+                                <option value="Pediatrics Service">Pediatrics Service</option>
+                                <option value="Pharmacy">Pharmacy</option>
+                                <option value="Physician">Physician</option>
+                                <option value="Physiotherapy">Physiotherapy</option>
+                                <option value="Play therapy room">Play therapy room</option>
+                                <option value="Pre admission unit">Pre admission unit</option>
+                                <option value="Purchasing">Purchasing</option>
+                                <option value="Quality Management">Quality Management</option>
+                                <option value="Radiology">Radiology</option>
+                                <option value="Radiotherapy">Radiotherapy</option>
+                                <option value="Radiotherapy technician">Radiotherapy technician</option>
+                                <option value="Respiratory therapy">Respiratory therapy</option>
+                                <option value="Safety">Safety</option>
+                                <option value="Screening clinic">Screening clinic</option>
+                                <option value="Security">Security</option>
+                                <option value="Social Workers/Psychology">Social Workers/Psychology</option>
+                                <option value="Solid Tumor Service">Solid Tumor Service</option>
+                                <option value="Surgeon">Surgeon</option>
+                                <option value="Surgical floor">Surgical floor</option>
+                                <option value="Surgical Service">Surgical Service</option>
+                                <option value="VAD">VAD</option>
+                                <option value="VIP">VIP</option>
+                                <option value="Waiting area">Waiting area</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label">Initial Scoring</label>
+                            <select name="initial_scoring" class="form-select" required>
+                                <option value="">Select Initial Score</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                                <option value="G">G</option>
+                                <option value="H">H</option>
+                                <option value="I">I</option>
+                                <option value="No score">No score</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Supervisor Name</label>
+                            <input type="text" name="supervisor_name" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Supervisor Email</label>
+                            <input type="email" name="supervisor_email" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Categories -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Event Categories</h5>
+            </div>
+            <div class="card-body">
+                <div class="category-container">
+                    <!-- Template for category row -->
+                    <template id="category-template">
+                        <div class="category-row mb-3">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="form-label">Primary Category</label>
+                                    <select class="form-select primary-category" name="primary_categories[]" required>
+                                        <option value="">Select Primary Category</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label subcategory-header">Select Subcategory</label>
+                                    <select class="form-select subcategory" name="subcategories[]" required>
+                                        <option value="">Select Subcategory</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button type="button" class="btn btn-danger remove-category">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Container for dynamic category rows -->
+                    <div id="categories-container">
+                        <!-- Initial category row will be added here -->
+                    </div>
+
+                    <!-- Add Category Button -->
+                    <div class="text-end mt-3">
+                        <button type="button" class="btn btn-primary" id="add-category">
+                            <i class="fas fa-plus me-2"></i>Add Another Category
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add this section before the Description and Actions card -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">BMT Patient Information</h5>
+                <div class="form-check form-switch">
+                    <input type="checkbox" 
+                           name="is_bmt_patient" 
+                           class="form-check-input" 
+                           id="bmtToggle">
+                    <label class="form-check-label" for="bmtToggle">BMT Patient</label>
+                </div>
+            </div>
+            <div class="card-body" id="bmtSection" style="display: none;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Physician Name</label>
+                            <select class="form-select" name="bmt_physician_name">
+                                <option value="">Select Physician</option>
+                                <option value="Dr.Khaled">Dr.Khaled</option>
+                                <option value="Dr.Rawad">Dr.Rawad</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Occurrence Category</label>
+                            <select class="form-select" name="bmt_occurrence_category">
+                                <option value="">Select Category</option>
+                                <option value="Planned">Planned</option>
+                                <option value="Unplanned">Unplanned</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Patient/Donor Notified</label>
+                            <div class="d-flex">
+                                <select class="form-select me-2" name="bmt_patient_donor_notified">
+                                    <option value="">Select</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                                <input type="time" class="form-control" name="bmt_patient_donor_notified_time">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">CTAG Related Occurrence - Reviewed by Processing Facility Medical Director</label>
+                            <div class="d-flex">
+                                <select class="form-select me-2" name="bmt_ctag_reviewed">
+                                    <option value="">Select</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                                <input type="time" class="form-control" name="bmt_ctag_reviewed_time">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Program Director Notified</label>
+                            <div class="d-flex">
+                                <select class="form-select me-2" name="bmt_program_director_notified">
+                                    <option value="">Select</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                                <input type="time" class="form-control" name="bmt_program_director_time">
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <label class="form-label">Program Director Review Date</label>
+                            <input type="date" class="form-control" name="bmt_program_director_date">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Attending Physician Notified</label>
+                            <div class="d-flex">
+                                <select class="form-select me-2" name="bmt_attending_notified">
+                                    <option value="">Select</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                                <input type="time" class="form-control" name="bmt_attending_time">
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <label class="form-label">Attending Review Date</label>
+                            <input type="date" class="form-control" name="bmt_attending_date">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Occurrences Presented at Quality Council/BMTQIC</label>
+                            <input type="date" class="form-control" name="bmt_quality_council_date" placeholder="Meeting Date">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Comments</label>
+                            <textarea class="form-control" name="bmt_comments" rows="3" placeholder="Enter comments"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add this JavaScript to handle the BMT toggle -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const bmtToggle = document.getElementById('bmtToggle');
+            const bmtSection = document.getElementById('bmtSection');
+            
+            bmtToggle.addEventListener('change', function() {
+                bmtSection.style.display = this.checked ? 'block' : 'none';
+                
+                // Get all form elements in the BMT section
+                const formElements = bmtSection.querySelectorAll('select, input, textarea');
+                
+                // Toggle required attribute based on checkbox state
+                formElements.forEach(element => {
+                    if (this.checked) {
+                        element.setAttribute('required', '');
+                    } else {
+                        element.removeAttribute('required');
+                        // Clear values when section is hidden
+                        if (element.type === 'select-one') {
+                            element.selectedIndex = 0;
+                        } else if (element.type === 'time' || element.type === 'date') {
+                            element.value = '';
+                        } else if (element.tagName === 'TEXTAREA') {
+                            element.value = '';
+                        }
+                    }
+                });
+            });
+        });
+        </script>
+
+        <!-- Description and Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Description and Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Type of Error</label>
+                        <select class="form-select" name="type_of_error" required>
+                            <option value="">Select Type of Error</option>
+                            <option value="Unintentional error">Unintentional error</option>
+                            <option value="risky action">Risky action</option>
+                            <option value="Reckless Action">Reckless Action</option>
+                            <option value="Impaired Judgment">Impaired Judgment</option>
+                            <option value="No error">No error</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Recommended Action Plan</label>
+                        <select class="form-select" name="recommended_action_plan" id="actionPlanSelect" required>
+                            <option value="">Select Recommended Action Plan</option>
+                            <option value="No action needed at this time">No action needed at this time</option>
+                            <option value="Trending over time">Trending over time</option>
+                            <option value="Employee training/or education">Employee training/or education</option>
+                            <option value="Coaching / Evaluation">Coaching / Evaluation</option>
+                            <option value="Peer review committee is recommended">Peer review committee is recommended</option>
+                            <option value="Performance improvement project is recommended">Performance improvement project is recommended</option>
+                            <option value="System revision recommended">System revision recommended</option>
+                            <option value="Adhoc committee done">Adhoc committee done</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Others Specification field - initially hidden -->
+                <div class="mb-3" id="othersSpecification" style="display: none;">
+                    <label class="form-label">If others, please specify:</label>
+                    <textarea class="form-control" name="action_plan_others" rows="2"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Brief Description of Event</label>
+                    <textarea name="event_description" class="form-control" rows="4" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Immediate Action Taken</label>
+                    <textarea name="immediate_action" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Supervisor Comments</label>
+                    <textarea name="supervisor_comments" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add this JavaScript to handle the Others specification field -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const actionPlanSelect = document.getElementById('actionPlanSelect');
+            const othersSpecification = document.getElementById('othersSpecification');
+            const othersTextarea = othersSpecification.querySelector('textarea');
+            
+            actionPlanSelect.addEventListener('change', function() {
+                if (this.value === 'Others') {
+                    othersSpecification.style.display = 'block';
+                    othersTextarea.setAttribute('required', '');
+                } else {
+                    othersSpecification.style.display = 'none';
+                    othersTextarea.removeAttribute('required');
+                    othersTextarea.value = '';
+                }
+            });
+        });
+        </script>
+
+        <!-- Add this section before the Submit Button -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Additional Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label class="form-label">Attachments</label>
+                            <div class="input-group">
+                                <input type="file" 
+                                       class="form-control" 
+                                       name="attachments[]" 
+                                       id="attachments" 
+                                       multiple
+                                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            </div>
+                            <small class="text-muted">
+                                Accepted file types: PDF, DOC, DOCX, JPG, JPEG, PNG. Maximum file size: 5MB per file.
+                            </small>
+                        </div>
+                        <div id="filePreview" class="mt-3 row g-3">
+                            <!-- Preview will be shown here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add this JavaScript for file preview and validation -->
+        <script>
+        document.getElementById('attachments').addEventListener('change', function(e) {
+            const filePreview = document.getElementById('filePreview');
+            filePreview.innerHTML = ''; // Clear previous previews
+            
+            Array.from(this.files).forEach(file => {
+                // Check file size (5MB limit)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`File ${file.name} is too large. Maximum size is 5MB.`);
+                    this.value = ''; // Clear the input
+                    return;
+                }
+                
+                const col = document.createElement('div');
+                col.className = 'col-md-4 col-sm-6';
+                
+                const card = document.createElement('div');
+                card.className = 'card h-100';
+                
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+                
+                // Show preview for images
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.className = 'img-fluid mb-2';
+                    img.style.maxHeight = '150px';
+                    img.style.objectFit = 'contain';
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                    
+                    cardBody.appendChild(img);
+                } else {
+                    // Show icon for documents
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-file fa-3x mb-2 text-primary';
+                    cardBody.appendChild(icon);
+                }
+                
+                // Add file name
+                const fileName = document.createElement('p');
+                fileName.className = 'mb-0 text-truncate';
+                fileName.textContent = file.name;
+                cardBody.appendChild(fileName);
+                
+                // Add file size
+                const fileSize = document.createElement('small');
+                fileSize.className = 'text-muted';
+                fileSize.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+                cardBody.appendChild(fileSize);
+                
+                card.appendChild(cardBody);
+                col.appendChild(card);
+                filePreview.appendChild(col);
+            });
+        });
+        </script>
+
+        <style>
+        #filePreview .card {
+            transition: all 0.3s ease;
+            border: 1px solid #dee2e6;
+        }
+
+        #filePreview .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        #filePreview .card-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        #filePreview img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+        }
+        </style>
+
+        <!-- Submit Button -->
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">Submit Event Report</button>
+        </div>
+    </form>
+</div>
+
+<script>
+// Define subcategories for each primary category
+const categorySubcategories = {
+    "Medication": [
+        "Medication Related",
+        "Medication Administration",
+        "Pharmacy Internal Errors",
+        "Medication Others"
+    ],
+    "Medication Related": [
+        "Adverse Reaction",
+        "Transcription error",
+        "Mislabeled",
+        "Not Documented",
+        "Improper Order",
+        "Incorrect Dosage",
+        "Incorrect Drug",
+        "Incorrect Route",
+        "Delay to Dispense",
+        "Hold"
+    ],
+    "Medication Administration": [
+        "Wrong Drug",
+        "Wrong Dose",
+        "Wrong Time",
+        "Wrong Patient",
+        "Wrong duration",
+        "Wrong route",
+        "High Alert Medication"
+    ],
+    "Pharmacy Internal Errors": [
+        "Prescribing",
+        "Internal error",
+        "Monitoring",
+        "Documenting",
+        "Dispensing",
+        "Administering"
+    ],
+    "Medication Others": [
+        "Expired medication",
+        "Damaged barcode stickers",
+        "Medication not prepared",
+        "Medication broken",
+        "Medication not available",
+        "Billing issues",
+        "Leakage",
+        "Crystal medication",
+        "Forget to take med",
+        "Medication spell",
+        "Medication was not returned to the pharmacy after patient discharge death",
+        "Missed dose"
+    ],
+    "Laboratory Related": [
+        "Improper Labeling",
+        "Improper Specimen",
+        "Incomplete Orders",
+        "Missed Specimen",
+        "No Requisition",
+        "No Signature no Date",
+        "Others",
+        "Phlebotomy Complications",
+        "Request Specimen Mismatch",
+        "Result Reporting Problem",
+        "Sample Mixup",
+        "Specimen Transport Problem",
+        "Time Delay in Processing"
+    ],
+    "Surgery/Invasive Procedure Related": [
+        "Anesthesia Problem",
+        "Intraoperative Death",
+        "Postoperative Death",
+        "Incorrect Instrument Sponge Count",
+        "Break in Sterile Technique",
+        "Delayed Procedure",
+        "Improper Preoperation",
+        "Unanticipated Intraoperative Patient Injury",
+        "Unplnnned returne to OR",
+        "Improper Consenting",
+        "Others"
+    ],
+    "I.V. Blood Related": [
+        "Blood Adverse Reaction",
+        "Infiltration",
+        "Omitted",
+        "Incorrect Grouping",
+        "Mislabeled",
+        "Wrong Additive",
+        "Tubing Not Changed",
+        "Not Documented",
+        "Refuse Transfusion", 
+        "Rate of Flow",
+        "Wrong Time",
+        "Transcription error",
+        "Tubing Pulled Out or Broken",
+        "Blood Others"
+    ],
+    "Blood Others": [
+        "Broken bag or line",
+        "Site of puncture was closed",
+        "Blood spell",
+        "Clots in blood Bag",
+        "Leakage", 
+        "Not available blood Blood products"
+    ],
+    "Equipment": [
+        "Unavailability of Items",
+        "Defect Malfunction",
+        "Improper use"
+    ],
+    "VAD": [
+        "Line Related",
+        "VAD Related"
+    ],
+    "Line Related": [
+        "Accidental removal",
+        "Leakage",
+        "Malfunction",
+        "Hematuria",
+        "Misplaced",
+        "Site Bleeding",
+        "Tension Pneumothorax",
+        "Occlusion",
+        "Rupture",
+        "Infection"
+    ],
+    "VAD Related": [
+        "Accidental Removal",
+        "Patient refused to remove IV access at the time of discharge",
+        "Improper VAD care",
+        "Broken clamp/Red lumen",
+        "Deep abrasion at cannula site",
+        "Hematoma",
+        "Peripheral line inserted in fistula or lymphedema",
+        "Thrombosis",
+        "Leakage",
+        "Pull out",
+        "Retained drain top of catheter",
+        "Site opening",
+        "No peripheral IV access",
+        "Peripheral IV access was inserted in lower limp",
+        "Dermatitis",
+        "Rupture cannula",
+        "Swelling infiltration",
+        "Infection",
+        "Extravasation",
+        "Malposition",
+        "Site Bleeding",
+        "Tension Pneumothorax",
+        "Occlusion",
+        "Rupture"
+    ],
+    "Admission Discharge": [
+        "Improper Booking",
+        "Delay Decision of Admission",
+        "Prolonged Stay in Triage",
+        "Cancelled Delay Procedure",
+        "Unplnned transfer to a higher level of care",
+        "Readmission to the hospital within 24 hours",
+        "Others"
+    ],
+    "Admission Discharge Others": [
+        "Delay of meal",
+        "Discharge on the same day of admission",
+        "Child patient was left by family without companion",
+        "Patient smoke in the room",
+        "Prolong stay in hospital",
+        "Staff assault",
+        "Elopement",
+        "Refuse treatment plan",
+        "Discharge AMA",
+        "Lack of management and coordination",
+        "Unplanned transfer to a higher level of care",
+        "Readmission to the hospital within 24 hours For Same Reason",
+        "Readmission to the hospital within 24 hours for Different Reason"
+    ],
+    "Documentation": [
+        "Misfiled Chart Form",
+        "Electronic System failure please specify",
+        "Using of Unapproved Abbreviations",
+        "Others"
+    ],
+    "Documentation Others": [
+        "Improper MDC note",
+        "CT report was initiated by mistake for wrong patient",
+        "Patient was incorrectly flagged on CPRS",
+        "Medication is NA and the nurse signed it as given",
+        "Initiated detailed medical report not by the physician",
+        "There is a virtual clinic documentation despite the fact of patient death before",
+        "Improper handling of Narcotic prescription books",
+        "No MDC decision",
+        "Incorrect patient Parameters"
+    ],
+    "Patient Falls": [
+        "Out of Bed",
+        "Off Table Stretcher",
+        "Off Bedside Commode",
+        "Off Scales Equipment",
+        "Off Chair",
+        "While Ambulating",
+        "During Recreational",
+        "Found on Floor"
+    ],
+    "Falls Categories": [
+        "No injury",
+        "Minor injury",
+        "Moderate injury",
+        "Major injury"
+    ],
+    "Pressure Sore": [
+        "Home Acquired",
+        "Hospital Acquired"
+    ],
+    "Pressure Sore Stages": [
+        "Stage I",
+        "Stage II",
+        "Stage III",
+        "Stage IV"
+    ],
+    "Safety": [
+        "Communication breakdown",
+        "Critical test result",
+        "Patient Identification",
+        "Unapproved abbreviation",
+        "Infection control related issues",
+        "Incomplete examination",
+        "Wrong Examination",
+        "Others"
+    ],
+    "Safety Others": [
+        "Patient not declare about disease or previous history",
+        "Not implementing doctor order",
+        "Not following treatment plan",
+        "Patient refused any intervention",
+        "treatment",
+        "education or assistance against medical Advice-AMA",
+        "Order was written without doing bedside assessment by the physician",
+        "Delay of the anesthesiologist to attend the code blue",
+        "The O2 controlled sign showed high O2 pressure and on the same time O2 level was dropped with the patient"
+    ]
+};
+
+// Update the template HTML
+const primaryCategories = {
+    "Medication": "Medication",
+    "Laboratory Related": "Laboratory Related",
+    "Surgery/Invasive Procedure Related": "Surgery/Invasive Procedure Related",
+    "I.V. Blood Related": "I.V. Blood Related",
+    "Equipment": "Equipment",
+    "VAD": "VAD",
+    "Admission Discharge": "Admission Discharge",
+    "Documentation": "Documentation",
+    "Patient Falls": "Patient Falls",
+    "Safety": "Safety",
+    "Pressure Sore": "Pressure Sore"  // Removed Pressure Sore Stages from here
+};
+
+// Function to update subcategories
+function updateSubcategories(primarySelect, subcategorySelect) {
+    const selectedCategory = primarySelect.value;
+    let subcategories = [];
+    
+    console.log('Updating subcategories for:', selectedCategory);
+    
+    // Find the header label
+    const headerLabel = subcategorySelect.closest('.col-md-5').querySelector('.subcategory-header');
+    
+    // Handle different category selections
+    if (selectedCategory === "Medication") {
+        subcategories = categorySubcategories["Medication"];
+        headerLabel.textContent = "Select Category:";
+    } else if (categorySubcategories[selectedCategory]) {
+        subcategories = categorySubcategories[selectedCategory];
+        headerLabel.textContent = `${selectedCategory} Options:`;
+    }
+    
+    console.log('Available subcategories:', subcategories);
+    
+    // Clear existing options
+    subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+    
+    // Add new options
+    subcategories.forEach(sub => {
+        const option = document.createElement('option');
+        option.value = sub;
+        option.textContent = sub;
+        subcategorySelect.appendChild(option);
+    });
+}
+
+// Function to add a new category row
+function addCategoryRow() {
+    const template = document.getElementById('category-template');
+    const container = document.getElementById('categories-container');
+    const clone = template.content.cloneNode(true);
+    
+    const primarySelect = clone.querySelector('.primary-category');
+    const subcategorySelect = clone.querySelector('.subcategory');
+    const removeButton = clone.querySelector('.remove-category');
+    
+    // Clear existing options in primary select except the first one
+    while (primarySelect.options.length > 1) {
+        primarySelect.remove(1);
+    }
+    
+    // Add primary categories
+    Object.keys(primaryCategories).forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        primarySelect.appendChild(option);
+    });
+    
+    // Handle primary category change
+    primarySelect.addEventListener('change', function() {
+        subcategorySelect.value = ''; // Reset subcategory selection
+        updateSubcategories(this, subcategorySelect);
+        handleSpecialCases(this, subcategorySelect);
+    });
+    
+    // Handle subcategory change
+    subcategorySelect.addEventListener('change', function() {
+        const selectedCategory = primarySelect.value;
+        const selectedSubcategory = this.value;
+        
+        console.log('Subcategory changed to:', selectedSubcategory);
+        
+        // Handle different subcategories
+        if (selectedSubcategory === "Medication Related" || 
+            selectedSubcategory === "Medication Administration" || 
+            selectedSubcategory === "Pharmacy Internal Errors") {
+            
+            // Update the header
+            const headerLabel = this.closest('.col-md-5').querySelector('.subcategory-header');
+            headerLabel.textContent = `${selectedSubcategory} Options:`;
+            
+            // Clear existing options
+            this.innerHTML = '<option value="">Select Subcategory</option>';
+            
+            // Add subcategories based on selection
+            const subcategories = categorySubcategories[selectedSubcategory] || [];
+            subcategories.forEach(sub => {
+                const option = document.createElement('option');
+                option.value = sub;
+                option.textContent = sub;
+                this.appendChild(option);
+            });
+        }
+        
+        handleSpecialCases(primarySelect, this);
+    });
+    
+    // Handle remove button
+    removeButton.addEventListener('click', function() {
+        this.closest('.category-row').remove();
+    });
+    
+    container.appendChild(clone);
+}
+
+// Initialize the form
+document.addEventListener('DOMContentLoaded', function() {
+    // Add initial category row
+    addCategoryRow();
+    
+    // Add category button handler
+    document.getElementById('add-category').addEventListener('click', addCategoryRow);
+});
+
+// Update the handleSpecialCases function
+function handleSpecialCases(primarySelect, subcategorySelect) {
+    const row = primarySelect.closest('.category-row');
+    const selectedValue = primarySelect.value;
+    const selectedSubcategory = subcategorySelect.value;
+    
+    console.log('handleSpecialCases called:', selectedValue, selectedSubcategory);
+    
+    // Remove any existing additional fields
+    const existingFields = row.querySelector('.additional-fields');
+    if (existingFields) {
+        existingFields.remove();
+    }
+    
+    // Create container for additional fields
+    const additionalFields = document.createElement('div');
+    additionalFields.className = 'additional-fields mt-3';
+
+    // Check if the selected subcategory is one of the Pharmacy Internal Errors options
+    const pharmacyInternalErrorOptions = categorySubcategories["Pharmacy Internal Errors"];
+    if (pharmacyInternalErrorOptions && pharmacyInternalErrorOptions.includes(selectedSubcategory)) {
+        console.log('Adding Pharmacy Internal Error fields');
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Pharmacy Internal Error Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Event Type</label>
+                                <select class="form-select" name="pharmacy_error_event_type[]" required>
+                                    <option value="">Select Event Type</option>
+                                    ${eventTypeOptions.map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.parentNode.appendChild(additionalFields);
+    }
+    
+    // Handle Hold subcategory
+    else if (selectedSubcategory === "Hold") {
+        console.log('Adding Hold fields');
+        additionalFields.className = 'additional-fields mt-3 w-100'; // Added w-100 for full width
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Hold Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Medication Name</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="hold_medication_name[]" 
+                                       placeholder="Enter medication name"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Cause of Hold</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="hold_cause[]" 
+                                       placeholder="Enter cause of hold"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Cost of Medication (JD)</label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       name="medication_cost[]" 
+                                       placeholder="Enter cost in JD"
+                                       step="0.01"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Recycled</label>
+                                <select class="form-select" 
+                                        name="recycled[]"
+                                        required>
+                                    <option value="">Select option</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.closest('.category-row').appendChild(additionalFields);
+    }
+    
+    // Handle High Alert Medication subcategory
+    else if (selectedSubcategory === "High Alert Medication") {
+        console.log('Adding High Alert Medication fields');
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">High Alert Medication Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">High Alert Medication Type</label>
+                                <select class="form-select" 
+                                        name="high_alert_medication_type[]" 
+                                        required>
+                                    <option value="">Select High Alert Medication Type</option>
+                                    <option value="Digoxin">Digoxin</option>
+                                    <option value="Phenytoin">Phenytoin</option>
+                                    <option value="Chemotherapeutic agents">Chemotherapeutic agents</option>
+                                    <option value="Insulin">Insulin</option>
+                                    <option value="Narcotics and Opiates">Narcotics and Opiates</option>
+                                    <option value="Benzodiazepines">Benzodiazepines (Lorazapam, Alprazolam, Midazolam, Diazepam)</option>
+                                    <option value="Anticoagulants">Anticoagulants and Thrombolytic Agents (Alteplase, Fondaparinaux, Heparin, Warfarin, Apixiban)</option>
+                                    <option value="Electrolytes">Electrolytes (Magnesium IV, Calcium IV, Phosphate salts IV, Potassium chloride, Hypertonic saline, Dextrose >20%)</option>
+                                    <option value="TPN">TPN</option>
+                                    <option value="Immunosuppressant">Immunosuppressant agents (Cyclosporine, Tacrolimus)</option>
+                                    <option value="Anti thymocyte">Anti thymocyte Globulin (Equine, Rabbit)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.parentNode.appendChild(additionalFields);
+    }
+    
+    // Handle Medication Administration subcategories
+    else if (selectedValue === "Medication Administration") {
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Medication Administration Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Medication Administration Location</label>
+                                <select class="form-select" name="medication_location[]" required>
+                                    <option value="">Select Location</option>
+                                    <option value="Inpatient">Inpatient</option>
+                                    <option value="Outpatient">Outpatient</option>
+                                    <option value="At home">At home</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.parentNode.appendChild(additionalFields);
+    }
+    
+    // Handle Node in process
+    else if (selectedValue === "Node in process") {
+        additionalFields.innerHTML = `
+            <div class="row">
+                <div class="col-md-12">
+                    <select class="form-control" name="node_in_process[]">
+                        <option value="">Select Node in Process</option>
+                        <option value="Prescribing">Prescribing</option>
+                        <option value="Internal error">Internal error</option>
+                        <option value="Monitoring">Monitoring</option>
+                        <option value="Documenting">Documenting</option>
+                        <option value="Dispensing">Dispensing</option>
+                        <option value="Administering">Administering</option>
+                    </select>
+                </div>
+            </div>
+        `;
+        subcategorySelect.parentNode.appendChild(additionalFields);
+    }
+
+    // Handle Medication Others subcategories
+    else if (selectedSubcategory === "Medication Others") {
+        console.log('Adding Medication Others fields');
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Medication Others Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Medication Others Type</label>
+                                <select class="form-select" name="medication_others_type[]" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Expired medication">Expired medication</option>
+                                    <option value="Damaged barcode stickers">Damaged barcode stickers</option>
+                                    <option value="Medication not prepared">Medication not prepared</option>
+                                    <option value="Medication broken">Medication broken</option>
+                                    <option value="Medication not available">Medication not available</option>
+                                    <option value="Billing issues">Billing issues</option>
+                                    <option value="Leakage">Leakage</option>
+                                    <option value="Crystal medication">Crystal medication</option>
+                                    <option value="Forget to take med">Forget to take med</option>
+                                    <option value="Medication spell">Medication spell</option>
+                                    <option value="Medication was not returned to the pharmacy after patient discharge death">Medication was not returned to the pharmacy after patient discharge death</option>
+                                    <option value="Missed dose">Missed dose</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.parentNode.appendChild(additionalFields);
+    }
+
+    // Handle Laboratory Related - Others subcategory
+    else if (selectedSubcategory === "Others" && selectedValue === "Laboratory Related") {
+        console.log('Adding Laboratory Others fields');
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Laboratory Others Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Laboratory Others Type</label>
+                                <select class="form-select" name="laboratory_others_type[]" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Contaminated sample">Contaminated sample</option>
+                                    <option value="Expired specimen tubes containers">Expired specimen tubes containers</option>
+                                    <option value="Hemolytic specimens">Hemolytic specimens</option>
+                                    <option value="Missed to send laboratory test">Missed to send laboratory test</option>
+                                    <option value="Not available blood culture bottles">Not available blood culture bottles</option>
+                                    <option value="Sample not collected on the system">Sample not collected on the system</option>
+                                    <option value="Spilled sample">Spilled sample</option>
+                                    <option value="Unneeded test">Unneeded test</option>
+                                    <option value="Wrong lab order entry">Wrong lab order entry</option>
+                                    <option value="Wrong tube usage">Wrong tube usage</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.parentNode.appendChild(additionalFields);
+    }
+
+    // Add to handleSpecialCases function
+    else if (selectedValue === "Surgery/Invasive Procedure Related") {
+        console.log('Adding Surgery/Invasive Procedure Related fields');
+        additionalFields.className = 'additional-fields mt-3 w-100'; // Added w-100 for full width
+        additionalFields.style.position = 'relative'; // Changed to relative
+        additionalFields.innerHTML = `
+            <div class="container-fluid"> <!-- Changed to container-fluid -->
+                <div class="card mt-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">Surgery/Invasive Procedure Details</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Post OP Complications</label>
+                                <select class="form-select" name="post_op_complications[]" required>
+                                    <option value="">Select Post OP Complication</option>
+                                    ${postOpComplications.map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Intraoperative Complications</label>
+                                <select class="form-select" name="intraoperative_complications[]" required>
+                                    <option value="">Select Intraoperative Complication</option>
+                                    ${intraoperativeComplications.map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Cancelled Procedure</label>
+                                <select class="form-select" name="cancelled_procedure[]" required>
+                                    <option value="">Select Cancelled Procedure Reason</option>
+                                    ${cancelledProcedure.map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Cancelled Procedure Location</label>
+                                <select class="form-select" name="cancelled_procedure_location[]" required>
+                                    <option value="">Select Location</option>
+                                    ${cancelledProcedureLocation.map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Equipment/Clinical Material/Medication</label>
+                                <select class="form-select" name="equipment_causes[]" required>
+                                    <option value="">Select Cause</option>
+                                    ${equipmentCauses.map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Hospital Related</label>
+                                <select class="form-select" name="hospital_related[]" required>
+                                    <option value="">Select Hospital Related Cause</option>
+                                    ${hospitalRelated.map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Medical Causes</label>
+                                <select class="form-select" name="medical_causes[]" required>
+                                    <option value="">Select Medical Cause</option>
+                                    ${medicalCauses.map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Patient Related</label>
+                                <select class="form-select" name="patient_related[]" required>
+                                    <option value="">Select Patient Related Cause</option>
+                                    ${patientRelated.map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Staff Related</label>
+                                <select class="form-select" name="staff_related[]" required>
+                                    <option value="">Select Staff Related Cause</option>
+                                    ${staffRelated.map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        // Change the append location
+        subcategorySelect.closest('.category-row').appendChild(additionalFields);
+    }
+    // Handle Surgery/Invasive Procedure Related - Others subcategory
+    else if (selectedSubcategory === "Others" && selectedValue === "Surgery/Invasive Procedure Related") {
+        console.log('Adding Surgery Others fields');
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Surgery Others Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Surgery Others Type</label>
+                                <select class="form-select" name="surgery_others_type[]" required>
+                                    <option value="">Select Type</option>
+                                    ${surgeryOthers.map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.closest('.category-row').appendChild(additionalFields);
+    }
+    // Add inside the handleSpecialCases function before the final closing brace
+    else if (selectedSubcategory === "Blood Others" && selectedValue === "I.V. Blood Related") {
+        console.log('Adding Blood Others fields');
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Blood Others Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Blood Others Type</label>
+                                <select class="form-select" name="blood_others_type[]" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Broken bag or line">Broken bag or line</option>
+                                    <option value="Site of puncture was closed">Site of puncture was closed</option>
+                                    <option value="Blood spell">Blood spell</option>
+                                    <option value="Clots in blood Bag">Clots in blood Bag</option>
+                                    <option value="Leakage">Leakage</option>
+                                    <option value="Not available blood Blood products">Not available blood Blood products</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.parentNode.appendChild(additionalFields);
+    }
+    // Add to the handleSpecialCases function, before the final closing brace
+    else if (selectedValue === "VAD") {
+        console.log('Adding VAD fields');
+        additionalFields.className = 'additional-fields mt-3 w-100'; // Added w-100 for full width
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">VAD Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Specific Issue</label>
+                                <select class="form-select vad-subtype-select" name="vad_subtype[]" required>
+                                    <option value="">Select Specific Issue</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const vadSubtypeSelect = additionalFields.querySelector('.vad-subtype-select');
+        
+        // Populate options based on the subcategory selection
+        if (selectedSubcategory === "Line Related") {
+            categorySubcategories["Line Related"].forEach(option => {
+                vadSubtypeSelect.add(new Option(option, option));
+            });
+        } else if (selectedSubcategory === "VAD Related") {
+            categorySubcategories["VAD Related"].forEach(option => {
+                vadSubtypeSelect.add(new Option(option, option));
+            });
+        }
+        
+        subcategorySelect.closest('.category-row').appendChild(additionalFields);
+    }
+    // Add to the handleSpecialCases function before the final closing brace
+    else if (selectedSubcategory === "Others" && selectedValue === "Admission Discharge") {
+        console.log('Adding Admission Discharge Others fields');
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Admission Discharge Others Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Specific Issue</label>
+                                <select class="form-select" name="admission_discharge_others_type[]" required>
+                                    <option value="">Select Specific Issue</option>
+                                    ${categorySubcategories["Admission Discharge Others"].map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.closest('.category-row').appendChild(additionalFields);
+    }
+    // Add to the categorySubcategories object
+    else if (selectedSubcategory === "Others" && selectedValue === "Documentation") {
+        console.log('Adding Documentation Others fields');
+        additionalFields.className = 'additional-fields mt-3 w-100'; // Added w-100 for full width
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Documentation Others Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Specific Issue</label>
+                                <select class="form-select" name="documentation_others_type[]" required>
+                                    <option value="">Select Specific Issue</option>
+                                    ${categorySubcategories["Documentation Others"].map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.closest('.category-row').appendChild(additionalFields);
+    }
+    // Add special handling for Electronic System failure
+    else if (selectedSubcategory === "Electronic System failure please specify") {
+        console.log('Adding Electronic System Failure field');
+        additionalFields.className = 'additional-fields mt-3 w-100';
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Electronic System Failure Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Please specify the electronic system failure</label>
+                                <textarea class="form-control" name="electronic_system_failure_details[]" rows="3" required 
+                                        placeholder="Please provide details about the electronic system failure"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.closest('.category-row').appendChild(additionalFields);
+    }
+    // Add to handleSpecialCases function before the final closing brace
+    else if (selectedValue === "Patient Falls") {
+        console.log('Adding Patient Falls fields');
+        additionalFields.className = 'additional-fields mt-3 w-100';
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Falls Category</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Select Falls Category</label>
+                                <select class="form-select" name="falls_category[]" required>
+                                    <option value="">Select Falls Category</option>
+                                    ${categorySubcategories["Falls Categories"].map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.closest('.category-row').appendChild(additionalFields);
+    }
+    // Add to the categorySubcategories object
+    else if (selectedValue === "Pressure Sore") {
+        console.log('Adding Pressure Sore fields');
+        additionalFields.className = 'additional-fields mt-3 w-100';
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Pressure Sore Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Stage</label>
+                                <select class="form-select" name="pressure_sore_stage[]" required>
+                                    <option value="">Select Stage</option>
+                                    ${categorySubcategories["Pressure Sore Stages"].map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Pressure Sore/Braden Score</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="pressure_sore_braden_score[]" 
+                                       placeholder="Enter Braden Score"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.closest('.category-row').appendChild(additionalFields);
+    }
+    // Add to the categorySubcategories object
+    else if (selectedSubcategory === "Others" && selectedValue === "Safety") {
+        console.log('Adding Safety Others fields');
+        additionalFields.className = 'additional-fields mt-3 w-100';
+        additionalFields.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Safety Others Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Specific Issue</label>
+                                <select class="form-select" name="safety_others_type[]" required>
+                                    <option value="">Select Specific Issue</option>
+                                    ${categorySubcategories["Safety Others"].map(option => 
+                                        `<option value="${option}">${option}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        subcategorySelect.closest('.category-row').appendChild(additionalFields);
+    }
+}
+
+// Initialize MRN search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.querySelector('form[method="get"]');
+    const searchMrnInput = document.getElementById('search_mrn');
+    
+    if (searchForm && searchMrnInput) {
+        searchForm.addEventListener('submit', function(e) {
+            if (!searchMrnInput.value.trim()) {
+                e.preventDefault();
+                alert('Please enter an MRN to search');
+            }
+        });
+    }
+});
+
+document.querySelector('form[method="post"]').addEventListener('submit', function(e) {
+    console.log('Form submitted');
+    
+    // Get all form data
+    const formData = new FormData(this);
+    console.log('Form data:');
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const pendingToggle = document.getElementById('pendingToggle');
+    const mainForm = document.querySelector('form[method="post"]');
+    
+    // Function to toggle form fields based on pending status
+    function toggleFormFields(isPending) {
+        // Only select elements within the main form
+        const formElements = mainForm.querySelectorAll('input:not([name="pending"]), select, textarea');
+        formElements.forEach(element => {
+            // Skip the submit button and required fields
+            if (element.type === 'submit') return;
+            
+            if (isPending) {
+                element.removeAttribute('readonly');
+                element.removeAttribute('disabled');
+                element.classList.remove('readonly-field');
+            } else {
+                element.setAttribute('readonly', 'true');
+                element.classList.add('readonly-field');
+            }
+        });
+    }
+    
+    // Set initial state - form should start enabled
+    if (pendingToggle) {
+        // Ensure the toggle starts checked (enabled)
+        pendingToggle.checked = true;
+        toggleFormFields(true);
+        
+        // Add change event listener
+        pendingToggle.addEventListener('change', function() {
+            toggleFormFields(this.checked);
+            if (!this.checked) {
+                if (!confirm('Are you sure you want to mark this event as completed? This will lock the form for editing.')) {
+                    this.checked = true;
+                    toggleFormFields(true);
+                }
+            }
+        });
+    }
+});
+
+// Add this constant for Event Type options
+const eventTypeOptions = [
+    "Allergy Documentation Inappropriate",
+    "Communication Breakdown",
+    "Defective Drug Product",
+    "Delay in Processing and Delivering Medications",
+    "Dose Omission",
+    "Drug preparation/processing defect",
+    "Duplication",
+    "Improper billing of medications",
+    "Medication order misfiled",
+    "Missing medication",
+    "Order not received",
+    "Other",
+    "PTS error",
+    "Transcription error on Medication sheet",
+    "Violation to donation policy",
+    "Violation to KHCC policies",
+    "Wrong time",
+    "Wrong Dose",
+    "wrong demographics",
+    "Wrong Drug",
+    "wrong duration",
+    "Wrong Frequency",
+    "Wrong indication",
+    "Wrong medication",
+    "Wrong order entry/activation by pharmacist",
+    "Wrong order entry/activation by pharmacist,Wrong medication",
+    "Wrong Patient",
+    "Wrong Prescription date",
+    "Wrong protocol",
+    "Wrong Time",
+    "Wrong strength",
+    "Wrong Drug Quantity",
+    "Wrong Route",
+    "Drug Administration Documentation Missing",
+    "Monitoring Error",
+    "Improper medication storage conditions",
+    "Wrong rate",
+    "Billing issues",
+    "Delay to dispense",
+    "Drug Administration Documentation Missing"
+];
+
+// Add these constants for the various dropdown options
+const postOpComplications = [
+    "Pneumothorax",
+    "Emphysema",
+    "Bleeding",
+    "Hematoma",
+    "Dental implantation dislodged with tube",
+    "Exploration laparotomy",
+    "Wound on the site of surgery with discharge",
+    "Hematuria and clot output post folyes",
+    "NGT tube post insertion drained gush",
+    "Complication post craniotomy",
+    "Hypoxic",
+    "Infected surgery wound site",
+    "Neck swelling and the air way blocked",
+    "Recurrent Vomiting post operation",
+    "Left eye severe pain post cystoscopy",
+    "Shortness of breath",
+    "limb weakness"
+];
+
+const surgeryOthers = [
+    "Failure to find wire through the skin",
+    "Aborted Procedure",
+    "Returned product or instrument",
+    "Postoperative/ Procedure death",
+    "During intubation teeth dislodged",
+    "Cancelled Procedure",
+    "Foreign body from previous surgery in other hospital",
+    "Organ not found",
+    "Foley's insertion complication",
+    "Patient had cardiac arrest",
+    "Aborted Surgery procedure",
+    "Teeth missed or injury post intubation",
+    "Keep patient for observation",
+    "Failed trial",
+    "Foreign body from previous surgery",
+    "Failed procedure"
+];
+
+const intraoperativeComplications = ["Desaturation"];
+
+const cancelledProcedure = [
+    "Hospital related",
+    "Clinical priority",
+    "lack of materials",
+    "Done of side of OR",
+    "Not schedualed",
+    "Patient not complied with instructions",
+    "Lack of coordination",
+    "Change in medical status",
+    "Change in treatment plan",
+    "Further investigations",
+    "Preoperative preparation",
+    "Patient refuse",
+    "No show",
+    "Financial",
+    "Bed crises",
+    "Surgeon unavailable"
+];
+
+const cancelledProcedureLocation = [
+    "OR",
+    "Interventional radiology",
+    "Endoscopy",
+    "Radiology"
+];
+
+const equipmentCauses = [
+    "lack of blood",
+    "lack of material"
+];
+
+const hospitalRelated = [
+    "Clinical priority",
+    "Done outside OR",
+    "Lack of coordination"
+];
+
+const medicalCauses = [
+    "Change in medical status",
+    "Change in treatment plan",
+    "Death",
+    "Failure in preoperative preparation",
+    "Further investigation",
+    "Not schedualed"
+];
+
+const patientRelated = [
+    "Financial issue",
+    "No show came late out of country",
+    "Patient Guardian not contactable",
+    "Patient guardian refused",
+    "Patient not complied with instructions"
+];
+
+const staffRelated = [
+    "Surgeon Reasons",
+    "Surgeon unavailable"
+];
+</script>
+
+<style>
+#search_mrn {
+    background-color: #fff !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    cursor: text !important;
+}
+
+.readonly-field {
+    background-color: #e9ecef !important;
+    cursor: not-allowed;
+}
+
+.form-check-input {
+    cursor: pointer;
+}
+
+.form-switch .form-check-input {
+    width: 2.5em;
+}
+
+.subcategory-header {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-label {
+    margin-bottom: 0.5rem;
+}
+
+.category-row .btn-danger {
+    margin-top: 2rem;
+}
+
+.category-row .col-md-5 {
+    display: block;
+}
+
+.form-select {
+    margin-top: 0;
+}
+
+/* Add this to your existing styles */
+.card-header h5 {
+    color: #0056b3; /* This is a standard bootstrap blue, adjust the hex code to match your exact logo color */
+    font-weight: 500;
+}
+</style>
+{% endblock %} 

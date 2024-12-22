@@ -1,0 +1,46 @@
+{% extends 'kpi_tracker/base.html' %}
+
+{% block subcontent %}
+<div class="container-fluid">
+    <div class="disease-header mb-4">
+        <h1 class="mb-4">Breast Cancer KPI</h1>
+        
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'breast_form' %}active{% endif %}" 
+                   href="{% url 'kpi_tracker:breast_form' %}">
+                   <i class="fas fa-edit me-2"></i>Form
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'breast_list' %}active{% endif %}" 
+                   href="{% url 'kpi_tracker:breast_list' %}">
+                   <i class="fas fa-list me-2"></i>View Entries
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'breast_followup' %}active{% endif %}" 
+                   href="{% url 'kpi_tracker:breast_followup' %}">
+                   <i class="fas fa-calendar-check me-2"></i>Follow-ups
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'breast_kpi_dashboard' %}active{% endif %}" 
+                   href="{% url 'kpi_tracker:breast_kpi_dashboard' %}">
+                   <i class="fas fa-chart-line me-2"></i>Dashboard
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    {% block breast_content %}{% endblock %}
+</div>
+{% endblock subcontent %}
+
+{% block extra_css %}
+    {% block breast_css %}{% endblock %}
+{% endblock %}
+
+{% block extra_js %}
+    {% block breast_js %}{% endblock %}
+{% endblock %} 

@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <!-- Header with KHCC Logo -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 text-center">
+            <img src="{% static 'images/khcc-logo.png' %}" alt="KHCC Logo" class="mb-4" style="max-width: 200px;">
+            <h1>KHCC Data Tools Hub</h1>
+            <p class="lead text-muted">King Hussein Cancer Center - Data Management Systems</p>
+        </div>
+    </div>
+
+    <!-- Tools Cards -->
+    <div class="row justify-content-center">
+        <!-- KPI Disease Management Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">KPI Disease Management</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Track and manage disease-specific Key Performance Indicators across different departments.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'kpi_tracker:kpi_home' %}" class="btn btn-primary">
+                            Access KPI Tool
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event & Incident Reporting Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Event & Incident Reporting</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Report and track events and incidents across the hospital. Monitor trends and manage responses.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'event_reporting:event_new' %}" class="btn btn-primary">
+                            Report New Event
+                        </a>
+                        <a href="{% url 'event_reporting:event_list' %}" class="btn btn-outline-primary">
+                            View Events
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if not user.is_authenticated %}
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6 text-center">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Please <a href="{% url 'admin:login' %}" class="alert-link">login</a> to access the tools.
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    padding: 1rem 1.25rem;
+}
+
+.card-text {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+.btn {
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+h1 {
+    color: #0d6efd;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.lead {
+    font-size: 1.1rem;
+    color: #6c757d;
+}
+
+.h-100 {
+    height: 100% !important;
+}
+</style>
+{% endblock %} 

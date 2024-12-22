@@ -1,0 +1,431 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-between align-items-center mb-4">
+        <div class="col">
+            <h2>Event Reports</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{% url 'event_reporting:event_new' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>New Event Report
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Total Events</h5>
+                    <p class="card-text display-6">{{ totals.total }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-warning">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">Good Catch Events</h5>
+                    <p class="card-text display-6">{{ totals.good_catch }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info">Events This Month</h5>
+                    <p class="card-text display-6">{{ totals.this_month }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Events Today</h5>
+                    <p class="card-text display-6">{{ totals.today }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Department</label>
+                    <select name="department" class="form-select">
+                        <option value="">All Departments</option>
+                        {% for dept in departments %}
+                            <option value="{{ dept.department_initiated }}" 
+                                    {% if dept.department_initiated == selected_filters.department %}selected{% endif %}>
+                                {{ dept.department_initiated }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Date Range</label>
+                    <select name="date_range" class="form-select">
+                        <option value="">All Time</option>
+                        <option value="today" {% if selected_filters.date_range == 'today' %}selected{% endif %}>Today</option>
+                        <option value="week" {% if selected_filters.date_range == 'week' %}selected{% endif %}>This Week</option>
+                        <option value="month" {% if selected_filters.date_range == 'month' %}selected{% endif %}>This Month</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Initial Scoring</label>
+                    <select name="scoring" class="form-select">
+                        <option value="">All Scores</option>
+                        <option value="Low" {% if selected_filters.scoring == 'Low' %}selected{% endif %}>Low</option>
+                        <option value="Medium" {% if selected_filters.scoring == 'Medium' %}selected{% endif %}>Medium</option>
+                        <option value="High" {% if selected_filters.scoring == 'High' %}selected{% endif %}>High</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">Apply Filters</button>
+                    {% if any_filters_active %}
+                        <a href="{% url 'event_reporting:event_list' %}" class="btn btn-light">Clear</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Events Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table datatable">
+                    <thead>
+                        <tr>
+                            <th>Event #</th>
+                            <th>MRN</th>
+                            <th>Event Date</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>QMO Score</th>
+                            <th>Last Update</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <td>{{ event.event_number }}</td>
+                            <td>{{ event.MRN }}</td>
+                            <td>{{ event.event_date|date:"Y-m-d" }}</td>
+                            <td>{{ event.department_initiated }}</td>
+                            <td>
+                                <span class="badge {% if event.pending %}bg-warning{% else %}bg-success{% endif %}">
+                                    {% if event.pending %}Pending{% else %}Completed{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                {% if event.final_score %}
+                                    <span class="badge bg-info">{{ event.final_score }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Not Scored</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ event.updated_at|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    {% if event.pending %}
+                                        {% if perms.event_reporting.manage_events or user.email == event.supervisor_email %}
+                                        <a href="{% url 'event_reporting:event_form' event.event_number %}" 
+                                           class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        {% endif %}
+                                    {% else %}
+                                        <a href="{% url 'event_reporting:event_view' event.event_number %}" 
+                                           class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    {% endif %}
+
+                                    {% if perms.event_reporting.view_all_events %}
+                                    <button type="button" 
+                                            class="btn btn-sm btn-info" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#historyModal{{ event.event_number }}">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    {% endif %}
+
+                                    {% if perms.event_reporting.manage_events %}
+                                    <button type="button"
+                                            class="btn btn-sm btn-success"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#commentModal{{ event.event_number }}">
+                                        <i class="fas fa-comment"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-sm btn-warning"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#assignModal{{ event.event_number }}">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                    {% endif %}
+
+                                    {% if not event.pending and perms.event_reporting.manage_events %}
+                                    <a href="{% url 'event_reporting:qmo_scoring' event.event_number %}" 
+                                       class="btn btn-sm btn-warning">
+                                        <i class="fas fa-star"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Add Comment Modal - Inside the loop -->
+                        <div class="modal fade" id="commentModal{{ event.event_number }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Add Comment - Event #{{ event.event_number }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <form method="post" action="{% url 'event_reporting:add_comment' event.event_number %}">
+                                        {% csrf_token %}
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Comment</label>
+                                                <textarea name="comment" class="form-control" rows="3" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Add Comment</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Assign Modal - Inside the loop -->
+                        <div class="modal fade" id="assignModal{{ event.event_number }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Assign Event #{{ event.event_number }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <form method="post" action="{% url 'event_reporting:assign_event' event.event_number %}">
+                                        {% csrf_token %}
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Assign to</label>
+                                                <input type="email" 
+                                                       name="user_email" 
+                                                       class="form-control" 
+                                                       placeholder="Enter user email"
+                                                       required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Assign</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card .display-6 {
+    font-size: 2.5rem;
+    font-weight: 500;
+    margin-bottom: 0;
+    color: #333;
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+    font-weight: 500;
+}
+
+.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000;
+}
+
+.bg-success {
+    background-color: #198754 !important;
+    color: #fff;
+}
+
+.btn-group .btn {
+    padding: 0.25rem 0.5rem;
+    margin-right: 0.25rem;
+}
+
+.btn-group .btn i {
+    font-size: 0.875rem;
+}
+
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.table-sm td, .table-sm th {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.table th {
+    font-weight: 500;
+    color: #666;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+}
+
+/* Simple Modal Fixes */
+.modal {
+    display: none;
+}
+
+.modal.show {
+    display: block;
+}
+
+.modal-dialog {
+    max-width: 500px;
+    margin: 30px auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.modal-content {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.modal-backdrop {
+    opacity: 0.5;
+}
+
+/* Prevent scrolling when modal is open */
+body.modal-open {
+    overflow: hidden;
+    padding-right: 0 !important;
+}
+
+/* Ensure buttons in btn-group have proper spacing */
+.btn-group .btn {
+    margin-right: 4px;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 10px;
+        width: auto;
+    }
+}
+</style>
+
+<!-- Add this script at the bottom of the file -->
+<script>
+$(document).ready(function() {
+    // Initialize all modals
+    $('.modal').modal({
+        backdrop: 'static',
+        keyboard: false,
+        show: false
+    });
+
+    // Center modal when shown
+    $('.modal').on('show.bs.modal', function() {
+        $(this).css('display', 'block');
+        var modalDialog = $(this).find('.modal-dialog');
+        modalDialog.css({
+            'top': '50%',
+            'transform': 'translateY(-50%)'
+        });
+    });
+
+    // Reset modal position when hidden
+    $('.modal').on('hidden.bs.modal', function() {
+        $(this).css('display', 'none');
+    });
+
+    // Prevent multiple modals
+    $('.modal').on('show.bs.modal', function() {
+        var zIndex = 1040 + (10 * $('.modal:visible').length);
+        $(this).css('z-index', zIndex);
+        setTimeout(function() {
+            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+});
+</script>
+
+<!-- Add History Modal for each event -->
+{% for event in events %}
+<div class="modal fade" id="historyModal{{ event.event_number }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Event History - #{{ event.event_number }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Modified By</th>
+                                <th>Type</th>
+                                <th>Field</th>
+                                <th>Old Value</th>
+                                <th>New Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in event.modificationlog_set.all|dictsortreversed:"timestamp" %}
+                            <tr>
+                                <td>{{ log.timestamp|date:"Y-m-d H:i" }}</td>
+                                <td>{{ log.modified_by }}</td>
+                                <td>{{ log.modification_type }}</td>
+                                <td>{{ log.field_name }}</td>
+                                <td>{{ log.old_value }}</td>
+                                <td>{{ log.new_value }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %} 

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">QMO Scoring - Event #{{ event.event_number }}</h5>
+            <span class="badge {% if event.event_closed %}bg-success{% else %}bg-warning{% endif %}">
+                {{ event.event_closed|yesno:"Closed,Open" }}
+            </span>
+        </div>
+        <div class="card-body">
+            <!-- Event Summary -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>MRN:</strong> {{ event.MRN }}</p>
+                    <p><strong>Event Date:</strong> {{ event.event_date|date:"Y-m-d" }}</p>
+                    <p><strong>Department:</strong> {{ event.department_initiated }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Reported By:</strong> {{ event.supervisor_name }}</p>
+                    <p><strong>Report Date:</strong> {{ event.created_at|date:"Y-m-d H:i" }}</p>
+                </div>
+            </div>
+
+            <!-- QMO Scoring Form -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Final Score</label>
+                            <select name="final_score" class="form-select" required>
+                                <option value="">Select Score</option>
+                                {% for score, label in final_score_choices %}
+                                <option value="{{ score }}" {% if event.final_score == score %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Likelihood</label>
+                            <select name="likelihood" class="form-select" required>
+                                <option value="">Select Likelihood</option>
+                                {% for value, label in likelihood_choices %}
+                                <option value="{{ value }}" {% if event.likelihood == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Consequence</label>
+                            <select name="consequence" class="form-select" required>
+                                <option value="">Select Consequence</option>
+                                {% for value, label in consequence_choices %}
+                                <option value="{{ value }}" {% if event.consequence == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Risk Calculated</label>
+                    <textarea name="risk_calculated" class="form-control" rows="3">{{ event.risk_calculated }}</textarea>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input type="checkbox" 
+                                   class="form-check-input" 
+                                   name="adhoc_committee_done" 
+                                   id="adhocCommittee"
+                                   {% if event.adhoc_committee_done %}checked{% endif %}>
+                            <label class="form-check-label" for="adhocCommittee">
+                                Adhoc Committee Done
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input type="checkbox" 
+                                   class="form-check-input" 
+                                   name="event_closed" 
+                                   id="eventClosed"
+                                   {% if event.event_closed %}checked{% endif %}>
+                            <label class="form-check-label" for="eventClosed">
+                                Event Closed
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">QMO Notes</label>
+                    <textarea name="qmo_notes" class="form-control" rows="3">{{ event.qmo_notes }}</textarea>
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">Save Scoring</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 
