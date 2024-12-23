@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() == 'true'
+DEBUG = False
 
 LOGGING = {
     'version': 1,
@@ -167,14 +167,15 @@ WHITENOISE_ALLOW_ALL_ORIGINS = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login URL for @login_required decorator
-LOGIN_URL = '/kpi/login/'
+LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = AZURE_AD['LOGOUT_URI']
 
 # Add this after DATABASES configuration
 DATABASE_ROUTERS = ['kpi_tracker.db_router.AzureDBRouter']
 
 AUTHENTICATION_BACKENDS = [
+    'kpi_tracker.auth_backends.AzureADBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -183,7 +184,11 @@ AZURE_AD_AUTH = {
     'TENANT_ID': AZURE_AD['TENANT_ID'],
     'CLIENT_ID': AZURE_AD['CLIENT_ID'],
     'CLIENT_SECRET': AZURE_AD['CLIENT_SECRET'],
-    'REDIRECT_URI': 'http://localhost:8000/oauth2/callback',
+    'REDIRECT_URI': AZURE_AD['REDIRECT_URI'],
+    'AUTHORITY': AZURE_AD['AUTHORITY'],
+    'SCOPE': AZURE_AD['SCOPE'],
+    'RESPONSE_TYPE': AZURE_AD['RESPONSE_TYPE'],
+    'RESPONSE_MODE': AZURE_AD['RESPONSE_MODE'],
 }
 
 # Add SITE_ID
@@ -192,4 +197,13 @@ SITE_ID = 1
 # Update Auth settings
 AUTH_USER_MODEL = 'kpi_tracker.User'
 
-TEMPLATE_DEBUG = True
+# Security settings for production
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
