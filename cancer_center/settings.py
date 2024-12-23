@@ -11,7 +11,7 @@ SECRET_KEY = 'django-insecure-your-secret-key-here'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://khcc-datahub.azurewebsites.net/']
+ALLOWED_HOSTS = ['khcc-datahub.azurewebsites.net']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
