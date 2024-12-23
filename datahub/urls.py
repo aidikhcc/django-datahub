@@ -6,5 +6,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('kpi/', include('kpi_tracker.urls')),
     path('events/', include('event_reporting.urls')),
+    path('registries/', include('registries.urls')),
     path('', lambda request: render(request, 'home.html'), name='home'),
 ] 

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="disease-header mb-4">
+        <h1 class="mb-4">BMT Registry</h1>
+        
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'bmt_form' %}active{% endif %}" 
+                   href="{% url 'registries:bmt_form' %}">
+                   <i class="fas fa-edit me-2"></i>Form
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'bmt_list' %}active{% endif %}" 
+                   href="{% url 'registries:bmt_list' %}">
+                   <i class="fas fa-list me-2"></i>View Entries
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'bmt_followup' %}active{% endif %}" 
+                   href="{% url 'registries:bmt_followup' %}">
+                   <i class="fas fa-calendar-check me-2"></i>Follow-ups
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'bmt_dashboard' %}active{% endif %}" 
+                   href="{% url 'registries:bmt_dashboard' %}">
+                   <i class="fas fa-chart-line me-2"></i>Dashboard
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    {% if messages %}
+    <div class="messages mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block bmt_content %}{% endblock %}
+</div>
+
+<style>
+.disease-header {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.nav-tabs {
+    border-bottom: none;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+    padding: 0.75rem 1rem;
+    margin-right: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: var(--khcc-primary-light);
+    color: var(--khcc-primary);
+}
+
+.nav-tabs .nav-link.active {
+    background-color: var(--khcc-primary);
+    color: white;
+}
+
+.messages {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1050;
+    max-width: 400px;
+}
+
+.alert {
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+
+{% block page_css %}
+    {% block bmt_css %}{% endblock %}
+{% endblock %}
+
+{% block page_js %}
+    {% block bmt_js %}{% endblock %}
+{% endblock %} 

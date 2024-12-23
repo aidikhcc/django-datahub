@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.db import connection
 
 @debug_login_required
 def event_home(request):
@@ -23,20 +24,127 @@ def event_form(request, event_number=None):
     print(f"Method: {request.method}")
     print(f"Event number: {event_number}")
     print(f"POST data: {request.POST}")
-    print(f"GET data: {request.GET}")
     
     try:
         event = None
         search_mrn = request.GET.get('search_mrn')
         search_result = None
         
+        # Add at the start of the view
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT @@version;")
+            db_version = cursor.fetchone()[0]
+            print(f"Connected to database: {db_version}")
+        
         # Handle POST request for form submission
         if request.method == 'POST':
+            print("Processing POST request")
+            print("POST data received:")
+            for key, value in request.POST.items():
+                print(f"{key}: {value}")
             with transaction.atomic():
                 # Get or create event instance
                 if event_number:
-                    event = get_object_or_404(Event, event_number=event_number)
+                    print(f"Updating existing event {event_number}")
+                    with connection.cursor() as cursor:
+                        cursor.execute("""
+                            SELECT 
+                                event_number, event_date, report_date, MRN, patient_name, 
+                                dob, gender, age, nationality, diagnosis, floor_unit, room,
+                                department_initiated, supervisor_name, supervisor_email,
+                                event_description, immediate_action, good_catch_event, pending,
+                                created_at, updated_at, final_score, likelihood, consequence,
+                                risk_calculated, adhoc_committee_done, event_closed,
+                                qmo_notes, scored_by, scored_at, type_of_error,
+                                recommended_action_plan, action_plan_others,
+                                supervisor_comments, department_unit_involved,
+                                department_unit_involved_2, initial_scoring,
+                                is_bmt_patient, bmt_physician_name, bmt_occurrence_category,
+                                bmt_patient_donor_notified, bmt_patient_donor_notified_time,
+                                bmt_ctag_reviewed, bmt_ctag_reviewed_time,
+                                bmt_program_director_notified, bmt_program_director_time,
+                                bmt_program_director_date, bmt_attending_notified,
+                                bmt_attending_time, bmt_attending_date,
+                                bmt_quality_council_date, bmt_comments
+                            FROM [datahub].[Event_Reports]
+                            WHERE event_number = %s
+                        """, [event_number])
+                        
+                        row = cursor.fetchone()
+                        if not row:
+                            raise Http404("Event not found")
+                            
+                        event = Event()
+                        event.event_number = row[0]
+                        event.event_date = row[1]
+                        event.report_date = row[2]
+                        event.MRN = row[3]
+                        event.patient_name = row[4]
+                        event.dob = row[5]
+                        event.gender = row[6]
+                        event.age = row[7]
+                        event.nationality = row[8]
+                        event.diagnosis = row[9]
+                        event.floor_unit = row[10]
+                        event.room = row[11]
+                        event.department_initiated = row[12]
+                        event.supervisor_name = row[13]
+                        event.supervisor_email = row[14]
+                        event.event_description = row[15]
+                        event.immediate_action = row[16]
+                        event.good_catch_event = row[17]
+                        event.pending = row[18]
+                        event.created_at = row[19]
+                        event.updated_at = row[20]
+                        event.final_score = row[21]
+                        event.likelihood = row[22]
+                        event.consequence = row[23]
+                        event.risk_calculated = row[24]
+                        event.adhoc_committee_done = row[25]
+                        event.event_closed = row[26]
+                        event.qmo_notes = row[27]
+                        event.scored_by = row[28]
+                        event.scored_at = row[29]
+                        event.type_of_error = row[30]
+                        event.recommended_action_plan = row[31]
+                        event.action_plan_others = row[32]
+                        event.supervisor_comments = row[33]
+                        event.department_unit_involved = row[34]
+                        event.department_unit_involved_2 = row[35]
+                        event.initial_scoring = row[36]
+                        event.is_bmt_patient = row[37]
+                        event.bmt_physician_name = row[38]
+                        event.bmt_occurrence_category = row[39]
+                        event.bmt_patient_donor_notified = row[40]
+                        event.bmt_patient_donor_notified_time = row[41]
+                        event.bmt_ctag_reviewed = row[42]
+                        event.bmt_ctag_reviewed_time = row[43]
+                        event.bmt_program_director_notified = row[44]
+                        event.bmt_program_director_time = row[45]
+                        event.bmt_program_director_date = row[46]
+                        event.bmt_attending_notified = row[47]
+                        event.bmt_attending_time = row[48]
+                        event.bmt_attending_date = row[49]
+                        event.bmt_quality_council_date = row[50]
+                        event.bmt_comments = row[51]
+                        
+                        # Get categories for this event
+                        cursor.execute("""
+                            SELECT category_type, subcategory
+                            FROM [datahub].[Event_Categories]
+                            WHERE event_number = %s
+                        """, [event_number])
+                        categories = cursor.fetchall()
+                        
+                        # Instead of direct assignment, store categories as a list property
+                        event._categories = [{'type': cat[0], 'subcategory': cat[1]} for cat in categories]
+                        
+                        # Add a method to access categories
+                        def get_categories(self):
+                            return getattr(self, '_categories', [])
+                        event.get_categories = get_categories.__get__(event)
                 else:
+                    print("Creating new event")
                     event = Event()
                 
                 # Required fields
@@ -59,14 +167,213 @@ def event_form(request, event_number=None):
                 event.good_catch_event = request.POST.get('good_catch_event') == 'on'
                 event.pending = request.POST.get('pending', 'on') == 'on'
                 
-                event.save()
-                messages.success(request, 'Event saved successfully!')
-                return redirect('event_reporting:event_list')
+                # Add these fields
+                event.department_unit_involved = request.POST.get('department_unit_involved')
+                event.department_unit_involved_2 = request.POST.get('department_unit_involved_2')
+                event.initial_scoring = request.POST.get('initial_scoring')
+                
+                # Handle categories
+                primary_categories = request.POST.getlist('primary_category')
+                subcategories = request.POST.getlist('subcategory')
+
+                # Delete existing categories
+                with connection.cursor() as cursor:
+                    cursor.execute("""
+                        DELETE FROM [datahub].[Event_Categories]
+                        WHERE event_number = %s
+                    """, [event.event_number])
+
+                # Save new categories
+                for category_type, subcategory in zip(primary_categories, subcategories):
+                    if category_type and subcategory:
+                        # First insert the category
+                        with connection.cursor() as cursor:
+                            cursor.execute("""
+                                INSERT INTO [datahub].[Event_Categories]
+                                (event_number, category_type, subcategory, created_at, updated_at)
+                                VALUES (%s, %s, %s, GETDATE(), GETDATE());
+                                SELECT SCOPE_IDENTITY();
+                            """, [event.event_number, category_type, subcategory])
+                            category_id = cursor.fetchone()[0]
+                            
+                            # If this is a surgery category, save the details
+                            if category_type == 'surgery_related':
+                                cursor.execute("""
+                                    INSERT INTO [datahub].[Surgery_Details]
+                                    (event_number, category_id, post_op_complication, 
+                                     intraoperative_complication, cancelled_procedure,
+                                     cancelled_procedure_location, equipment_cause,
+                                     hospital_related, medical_cause, patient_related,
+                                     staff_related)
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                """, [
+                                    event.event_number,
+                                    category_id,
+                                    request.POST.get('post_op_complications'),
+                                    request.POST.get('intraoperative_complications'),
+                                    request.POST.get('cancelled_procedure'),
+                                    request.POST.get('cancelled_procedure_location'),
+                                    request.POST.get('equipment_causes'),
+                                    request.POST.get('hospital_related'),
+                                    request.POST.get('medical_causes'),
+                                    request.POST.get('patient_related'),
+                                    request.POST.get('staff_related')
+                                ])
+                
+                # Add debug print before save
+                print("About to save event with data:", {
+                    'MRN': event.MRN,
+                    'event_date': event.event_date,
+                    'department_initiated': event.department_initiated,
+                    'department_unit_involved': event.department_unit_involved,
+                    'department_unit_involved_2': event.department_unit_involved_2,
+                    'initial_scoring': event.initial_scoring,
+                    'supervisor_name': event.supervisor_name,
+                    'pending': event.pending
+                })
+                
+                try:
+                    event.save()
+                    print("Event saved successfully")
+                    messages.success(request, 'Event saved successfully!')
+                    return redirect('event_reporting:event_list')
+                except Exception as save_error:
+                    print(f"Error saving event: {str(save_error)}")
+                    raise  # Re-raise the exception to be caught by outer try block
         
         # Handle GET request for displaying form
         elif event_number:
-            event = get_object_or_404(Event, event_number=event_number)
+            # Get fresh data from database using raw SQL
+            with connection.cursor() as cursor:
+                # Get event data
+                cursor.execute("""
+                    SELECT 
+                        event_number, event_date, report_date, MRN, patient_name, 
+                        dob, gender, age, nationality, diagnosis, floor_unit, room,
+                        department_initiated, supervisor_name, supervisor_email,
+                        event_description, immediate_action, good_catch_event, pending,
+                        created_at, updated_at, final_score, likelihood, consequence,
+                        risk_calculated, adhoc_committee_done, event_closed,
+                        qmo_notes, scored_by, scored_at, type_of_error,
+                        recommended_action_plan, action_plan_others,
+                        supervisor_comments, department_unit_involved,
+                        department_unit_involved_2, initial_scoring,
+                        is_bmt_patient, bmt_physician_name, bmt_occurrence_category,
+                        bmt_patient_donor_notified, bmt_patient_donor_notified_time,
+                        bmt_ctag_reviewed, bmt_ctag_reviewed_time,
+                        bmt_program_director_notified, bmt_program_director_time,
+                        bmt_program_director_date, bmt_attending_notified,
+                        bmt_attending_time, bmt_attending_date,
+                        bmt_quality_council_date, bmt_comments
+                    FROM [datahub].[Event_Reports]
+                    WHERE event_number = %s
+                """, [event_number])
+                
+                row = cursor.fetchone()
+                if row:
+                    # Create Event object from raw data
+                    event = Event()
+                    event.event_number = row[0]
+                    event.event_date = row[1]
+                    event.report_date = row[2]
+                    event.MRN = row[3]
+                    event.patient_name = row[4]
+                    event.dob = row[5]
+                    event.gender = row[6]
+                    event.age = row[7]
+                    event.nationality = row[8]
+                    event.diagnosis = row[9]
+                    event.floor_unit = row[10]
+                    event.room = row[11]
+                    event.department_initiated = row[12]
+                    event.supervisor_name = row[13]
+                    event.supervisor_email = row[14]
+                    event.event_description = row[15]
+                    event.immediate_action = row[16]
+                    event.good_catch_event = row[17]
+                    event.pending = row[18]
+                    event.created_at = row[19]
+                    event.updated_at = row[20]
+                    event.final_score = row[21]
+                    event.likelihood = row[22]
+                    event.consequence = row[23]
+                    event.risk_calculated = row[24]
+                    event.adhoc_committee_done = row[25]
+                    event.event_closed = row[26]
+                    event.qmo_notes = row[27]
+                    event.scored_by = row[28]
+                    event.scored_at = row[29]
+                    event.type_of_error = row[30]
+                    event.recommended_action_plan = row[31]
+                    event.action_plan_others = row[32]
+                    event.supervisor_comments = row[33]
+                    event.department_unit_involved = row[34]
+                    event.department_unit_involved_2 = row[35]
+                    event.initial_scoring = row[36]
+                    event.is_bmt_patient = row[37]
+                    event.bmt_physician_name = row[38]
+                    event.bmt_occurrence_category = row[39]
+                    event.bmt_patient_donor_notified = row[40]
+                    event.bmt_patient_donor_notified_time = row[41]
+                    event.bmt_ctag_reviewed = row[42]
+                    event.bmt_ctag_reviewed_time = row[43]
+                    event.bmt_program_director_notified = row[44]
+                    event.bmt_program_director_time = row[45]
+                    event.bmt_program_director_date = row[46]
+                    event.bmt_attending_notified = row[47]
+                    event.bmt_attending_time = row[48]
+                    event.bmt_attending_date = row[49]
+                    event.bmt_quality_council_date = row[50]
+                    event.bmt_comments = row[51]
+                    
+                    # Get categories for this event
+                    cursor.execute("""
+                        SELECT category_type, subcategory
+                        FROM [datahub].[Event_Categories]
+                        WHERE event_number = %s
+                    """, [event_number])
+                    categories = cursor.fetchall()
+                    
+                    # Instead of direct assignment, store categories as a list property
+                    event._categories = [{'type': cat[0], 'subcategory': cat[1]} for cat in categories]
+                    
+                    # Add a method to access categories
+                    def get_categories(self):
+                        return getattr(self, '_categories', [])
+                    event.get_categories = get_categories.__get__(event)
+                    
+                    # After retrieving categories
+                    for category in event._categories:
+                        if category['type'] == 'surgery_related':
+                            with connection.cursor() as cursor:
+                                cursor.execute("""
+                                    SELECT post_op_complication, intraoperative_complication,
+                                           cancelled_procedure, cancelled_procedure_location,
+                                           equipment_cause, hospital_related, medical_cause,
+                                           patient_related, staff_related
+                                    FROM [datahub].[Surgery_Details]
+                                    WHERE event_number = %s AND category_id = %s
+                                """, [event.event_number, category['id']])
+                                surgery_details = cursor.fetchone()
+                                if surgery_details:
+                                    category['surgery_details'] = {
+                                        'post_op_complication': surgery_details[0],
+                                        'intraoperative_complication': surgery_details[1],
+                                        'cancelled_procedure': surgery_details[2],
+                                        'cancelled_procedure_location': surgery_details[3],
+                                        'equipment_cause': surgery_details[4],
+                                        'hospital_related': surgery_details[5],
+                                        'medical_cause': surgery_details[6],
+                                        'patient_related': surgery_details[7],
+                                        'staff_related': surgery_details[8]
+                                    }
+                else:
+                    from django.http import Http404
+                    raise Http404("Event not found")
+            
             print(f"Found existing event: {event}")
+            print(f"Supervisor name: {event.supervisor_name}")
+        
         elif search_mrn:
             # Get patient info for new event
             patient_info = retrieve_patient_info(search_mrn)
@@ -119,48 +426,93 @@ def event_list(request):
     date_range = request.GET.get('date_range')
     scoring = request.GET.get('scoring')
     
-    # Start with all events
-    events = Event.objects.all()
-    
-    # Apply filters
-    if department:
-        events = events.filter(department_initiated=department)
-    
-    if date_range:
-        today = timezone.now().date()
-        if date_range == 'today':
-            events = events.filter(event_date=today)
-        elif date_range == 'week':
-            week_ago = today - timedelta(days=7)
-            events = events.filter(event_date__gte=week_ago)
-        elif date_range == 'month':
-            month_ago = today - timedelta(days=30)
-            events = events.filter(event_date__gte=month_ago)
-    
-    if scoring:
-        events = events.filter(initial_scoring=scoring)
-    
-    # Calculate totals
-    today = timezone.now().date()
-    month_start = today.replace(day=1)
-    
-    totals = {
-        'total': Event.objects.count(),
-        'good_catch': Event.objects.filter(good_catch_event=True).count(),
-        'this_month': Event.objects.filter(event_date__gte=month_start).count(),
-        'today': Event.objects.filter(event_date=today).count(),
-        'scored': Event.objects.exclude(final_score__isnull=True).count(),
-        'closed': Event.objects.filter(event_closed=True).count(),
-    }
-    
-    # Get unique departments for filter
-    departments = Event.objects.values('department_initiated').distinct()
-    
-    # Check if any filters are active
-    any_filters_active = any([department, date_range, scoring])
+    # Build the SQL query with only existing columns
+    with connection.cursor() as cursor:
+        sql = """
+            SELECT 
+                event_number, event_date, MRN, patient_name, 
+                department_initiated, supervisor_name,
+                event_description, immediate_action,
+                good_catch_event, pending, final_score,
+                created_at, updated_at
+            FROM [datahub].[Event_Reports]
+            WHERE 1=1
+        """
+        params = []
+        
+        # Add filters
+        if department:
+            sql += " AND department_initiated = %s"
+            params.append(department)
+        
+        if date_range:
+            today = timezone.now().date()
+            if date_range == 'today':
+                sql += " AND event_date = %s"
+                params.append(today)
+            elif date_range == 'week':
+                sql += " AND event_date >= %s"
+                params.append(today - timedelta(days=7))
+            elif date_range == 'month':
+                sql += " AND event_date >= %s"
+                params.append(today - timedelta(days=30))
+        
+        if scoring:
+            sql += " AND final_score = %s"
+            params.append(scoring)
+        
+        sql += " ORDER BY event_date DESC"
+        
+        # Execute query
+        cursor.execute(sql, params)
+        
+        # Convert to list of Event objects
+        events = []
+        for row in cursor.fetchall():
+            event = Event()
+            event.event_number = row[0]
+            event.event_date = row[1]
+            event.MRN = row[2]
+            event.patient_name = row[3]
+            event.department_initiated = row[4]
+            event.supervisor_name = row[5]
+            event.event_description = row[6]
+            event.immediate_action = row[7]
+            event.good_catch_event = row[8]
+            event.pending = row[9]
+            event.final_score = row[10]
+            event.created_at = row[11]
+            event.updated_at = row[12]
+            events.append(event)
+        
+        # Get totals
+        cursor.execute("""
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN good_catch_event = 1 THEN 1 ELSE 0 END) as good_catch,
+                SUM(CASE WHEN event_date >= DATEADD(month, -1, GETDATE()) THEN 1 ELSE 0 END) as this_month,
+                SUM(CASE WHEN event_date = CAST(GETDATE() AS DATE) THEN 1 ELSE 0 END) as today
+            FROM [datahub].[Event_Reports]
+        """)
+        totals_row = cursor.fetchone()
+        totals = {
+            'total': totals_row[0] or 0,
+            'good_catch': totals_row[1] or 0,
+            'this_month': totals_row[2] or 0,
+            'today': totals_row[3] or 0,
+        }
+        
+        # Get unique departments for filter
+        cursor.execute("""
+            SELECT DISTINCT department_initiated 
+            FROM [datahub].[Event_Reports] 
+            WHERE department_initiated IS NOT NULL
+            ORDER BY department_initiated
+        """)
+        departments = [{'department_initiated': row[0]} for row in cursor.fetchall()]
     
     context = {
-        'events': events.order_by('-event_date'),
+        'events': events,
         'totals': totals,
         'departments': departments,
         'selected_filters': {
@@ -168,7 +520,7 @@ def event_list(request):
             'date_range': date_range,
             'scoring': scoring,
         },
-        'any_filters_active': any_filters_active,
+        'any_filters_active': any([department, date_range, scoring]),
     }
     
     return render(request, 'event_reporting/event_list.html', context)

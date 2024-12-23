@@ -1,0 +1,310 @@
+{% extends 'registries/bmt/base.html' %}
+
+{% block bmt_css %}
+<style>
+    .chart-container {
+        position: relative;
+        height: 220px;
+        margin-bottom: 0;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+    }
+
+    .chart-container:hover {
+        opacity: 0.8;
+    }
+
+    .chart-container-large {
+        height: 600px;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        margin-bottom: 0.75rem;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .text-truncate {
+        max-width: 150px;
+    }
+
+    .date-range-slider {
+        height: 40px;
+        padding: 15px 10px;
+        margin: 10px 0;
+    }
+</style>
+{% endblock %}
+
+{% block bmt_content %}
+<div class="container-fluid">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="mt-2">Updating Dashboard...</div>
+        </div>
+    </div>
+
+    <!-- Dashboard Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">BMT Registry Dashboard</h4>
+        <button id="snapshotDashboardBtn" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-camera me-1"></i>Snapshot Dashboard
+        </button>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <!-- Total Transplants -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-2">Total Transplants</h6>
+                            <h4 class="mb-0">
+                                <i class="fas fa-procedures me-2"></i>
+                                <span class="badge bg-primary">{{ total_registries }}</span>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Cases -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-2">Active Cases</h6>
+                            <h4 class="mb-0">
+                                <i class="fas fa-user-check me-2"></i>
+                                <span class="badge bg-success">{{ total_active }}</span>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transplants This Year -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-2">Transplants This Year</h6>
+                            <h4 class="mb-0">
+                                <i class="fas fa-calendar-check me-2"></i>
+                                <span class="badge bg-info">{{ transplants_this_year }}</span>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Survival Rate -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted mb-2">Overall Survival Rate</h6>
+                            <h4 class="mb-0">
+                                <i class="fas fa-heartbeat me-2"></i>
+                                <span class="badge bg-warning">{{ survival_rate }}%</span>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <!-- Transplants Trend -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Transplants Over Time</h5>
+                    <button class="btn btn-sm p-0" onclick="downloadChartData('transplantsTrend')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="transplantsTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disease Distribution -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Disease Distribution</h5>
+                    <button class="btn btn-sm p-0" onclick="downloadChartData('diseaseDistribution')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="diseaseDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row of Charts -->
+    <div class="row mb-4">
+        <!-- Service Distribution -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Service Distribution</h5>
+                    <button class="btn btn-sm p-0" onclick="downloadChartData('serviceDistribution')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="serviceDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donor Types -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Donor Types</h5>
+                    <button class="btn btn-sm p-0" onclick="downloadChartData('donorTypes')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="donorTypesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Age Distribution -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Age Distribution</h5>
+                    <button class="btn btn-sm p-0" onclick="downloadChartData('ageDistribution')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="ageDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Modal -->
+    <div class="modal fade" id="chartModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-sm btn-outline-primary me-2" onclick="copyChartToClipboard()">
+                            <i class="fas fa-camera me-1"></i>Snapshot
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="chart-container-large">
+                        <canvas id="modalChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block bmt_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Register Chart.js plugins
+    Chart.register(ChartDataLabels);
+
+    // Initialize charts with data from Django context
+    const charts = initializeCharts();
+
+    // Add double-click handlers for all chart containers
+    document.querySelectorAll('.chart-container').forEach(container => {
+        container.addEventListener('dblclick', function(e) {
+            const chartCanvas = this.querySelector('canvas');
+            if (chartCanvas) {
+                const chartId = chartCanvas.id;
+                const chart = charts[chartId.replace('Chart', '')];
+                if (chart) {
+                    showChartInModal(chart, chartId);
+                }
+            }
+        });
+    });
+});
+
+function initializeCharts() {
+    const charts = {};
+
+    // Initialize each chart with its data
+    charts.transplantsTrend = new Chart(
+        document.getElementById('transplantsTrendChart'),
+        {
+            type: 'line',
+            data: {
+                labels: {{ transplants_trend.labels|safe }},
+                datasets: [{
+                    label: 'Transplants',
+                    data: {{ transplants_trend.data|safe }},
+                    borderColor: '#0068c9',
+                    backgroundColor: '#e6f0ff',
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        }
+    );
+
+    // Initialize other charts similarly...
+
+    return charts;
+}
+
+// Add other necessary chart functions (showChartInModal, downloadChartData, etc.)
+</script>
+{% endblock %} 

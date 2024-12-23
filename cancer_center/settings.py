@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'kpi_tracker.apps.KpiTrackerConfig',
     'event_reporting',
+    'registries.apps.RegistriesConfig',
 ]
 
 MIDDLEWARE = [
@@ -40,7 +41,10 @@ ROOT_URLCONF = 'cancer_center.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'registries', 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -48,6 +52,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+            ],
+            'loaders': [
+                'django.template.loaders.app_directories.Loader',
+                'django.template.loaders.filesystem.Loader',
             ],
         },
     },
@@ -151,3 +159,5 @@ SITE_ID = 1
 
 # Update Auth settings
 AUTH_USER_MODEL = 'kpi_tracker.User'
+
+TEMPLATE_DEBUG = True

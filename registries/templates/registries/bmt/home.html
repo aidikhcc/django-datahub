@@ -1,0 +1,204 @@
+{% extends 'registries/bmt/base.html' %}
+
+{% block bmt_content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 text-center">
+            <h2>BMT Registry Management</h2>
+            <p class="lead text-muted">Track and manage bone marrow transplant cases and outcomes</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total Registries</h6>
+                    <h4 class="mb-0">
+                        <i class="fas fa-database me-2 text-primary"></i>
+                        <span class="badge bg-primary">{{ total_registries|default:0 }}</span>
+                    </h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Active Cases</h6>
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-check me-2 text-success"></i>
+                        <span class="badge bg-success">{{ active_cases|default:0 }}</span>
+                    </h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Due for Follow-up</h6>
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-check me-2 text-warning"></i>
+                        <span class="badge bg-warning">{{ due_followups|default:0 }}</span>
+                    </h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">This Year</h6>
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar me-2 text-info"></i>
+                        <span class="badge bg-info">{{ this_year|default:0 }}</span>
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <!-- New Entry Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">New Entry</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Create a new BMT registry entry for a patient.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'registries:bmt_form' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add New Entry
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Entries Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">View Entries</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">View and manage existing BMT registry entries.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'registries:bmt_list' %}" class="btn btn-primary">
+                            <i class="fas fa-list me-2"></i>View All Entries
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Follow-ups Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Follow-ups</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Track and manage patient follow-ups.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'registries:bmt_followup' %}" class="btn btn-primary">
+                            <i class="fas fa-calendar-check me-2"></i>View Follow-ups
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    {% if recent_activity %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Recent Activity</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>MRN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in recent_activity %}
+                        <tr>
+                            <td>{{ activity.timestamp|date:"Y-m-d H:i" }}</td>
+                            <td>{{ activity.username }}</td>
+                            <td>{{ activity.action_type }}</td>
+                            <td>{{ activity.mrn }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    padding: 1rem 1.25rem;
+}
+
+.card-text {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+.btn {
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--khcc-primary);
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: var(--khcc-primary-dark);
+    transform: translateY(-1px);
+}
+
+.badge {
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.table td {
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+</style>
+{% endblock %} 

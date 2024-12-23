@@ -1,0 +1,187 @@
+{% extends 'registries/bmt/base.html' %}
+
+{% block bmt_content %}
+<div class="container-fluid">
+    <!-- Search Section -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="search_mrn" class="form-label">Search MRN</label>
+                    <div class="input-group">
+                        {{ search_form.mrn }}
+                        {{ search_form.transplant_number }}
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </div>
+                {% if search_result %}
+                <div class="col-md-8">
+                    <div class="alert alert-{{ search_result.type }} py-2 mb-0">
+                        {{ search_result.message }}
+                    </div>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Form -->
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <!-- Patient Information Section -->
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">Patient Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.MRN.id_for_label }}" class="form-label">MRN</label>
+                            {{ form.MRN }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.Number_of_Transplant.id_for_label }}" class="form-label">Transplant Number</label>
+                            {{ form.Number_of_Transplant }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.Patient_name.id_for_label }}" class="form-label">Patient Name</label>
+                            {{ form.Patient_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.Birth_date.id_for_label }}" class="form-label">Birth Date</label>
+                            {{ form.Birth_date }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.Gender.id_for_label }}" class="form-label">Gender</label>
+                            {{ form.Gender }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.Nationality.id_for_label }}" class="form-label">Nationality</label>
+                            {{ form.Nationality }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.Service.id_for_label }}" class="form-label">Service</label>
+                            {{ form.Service }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.Physician_name.id_for_label }}" class="form-label">Physician Name</label>
+                                    {{ form.Physician_name }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.Patient_Blood_Group.id_for_label }}" class="form-label">Blood Group</label>
+                                    {{ form.Patient_Blood_Group }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disease Information Section -->
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">Disease Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.Diagnosis.id_for_label }}" class="form-label">Diagnosis</label>
+                            {{ form.Diagnosis }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.Disease_Classification_Status_Pre_Transplantation.id_for_label }}" class="form-label">Disease Classification</label>
+                            {{ form.Disease_Classification_Status_Pre_Transplantation }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.Disease_Category.id_for_label }}" class="form-label">Disease Category</label>
+                            {{ form.Disease_Category }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.Initial_Diagnosis_date.id_for_label }}" class="form-label">Initial Diagnosis Date</label>
+                            {{ form.Initial_Diagnosis_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.Disease_Status_at_last_follow_up.id_for_label }}" class="form-label">Disease Status</label>
+                            {{ form.Disease_Status_at_last_follow_up }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.Malignant_vs_Non_Malignant.id_for_label }}" class="form-label">Malignant Status</label>
+                            {{ form.Malignant_vs_Non_Malignant }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-flex justify-content-end mb-3">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</div>
+
+{% block extra_css %}
+<style>
+.card {
+    border: 1px solid rgba(0,0,0,.125);
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.select2-container .select2-selection--single {
+    height: 38px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 36px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Initialize Select2
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        width: '100%'
+    });
+
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+});
+</script>
+{% endblock %}
+{% endblock %} 

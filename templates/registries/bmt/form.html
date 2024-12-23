@@ -1,0 +1,591 @@
+{% extends 'registries/bmt/base.html' %}
+
+{% block bmt_content %}
+<div class="container-fluid">
+    <!-- Search Section -->
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Search Patient</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row align-items-center" id="searchForm">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-control" 
+                               id="mrn" 
+                               name="mrn" 
+                               value="{{ search_mrn|default:'' }}"
+                               placeholder="Enter MRN"
+                               required>
+                        <select class="form-select" 
+                                name="transplant_number" 
+                                style="max-width: 150px;">
+                            <option value="1st Transplant" {% if search_transplant_number == '1st Transplant' %}selected{% endif %}>1st Transplant</option>
+                            <option value="2nd Transplant" {% if search_transplant_number == '2nd Transplant' %}selected{% endif %}>2nd Transplant</option>
+                            <option value="3rd Transplant" {% if search_transplant_number == '3rd Transplant' %}selected{% endif %}>3rd Transplant</option>
+                            <option value="4th Transplant" {% if search_transplant_number == '4th Transplant' %}selected{% endif %}>4th Transplant</option>
+                            <option value="5th Transplant" {% if search_transplant_number == '5th Transplant' %}selected{% endif %}>5th Transplant</option>
+                        </select>
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search me-1"></i>Search
+                        </button>
+                    </div>
+                </div>
+                {% if search_result %}
+                <div class="col-md-6">
+                    <div class="alert alert-{{ search_result.type }} py-2 mb-0">
+                        {{ search_result.message }}
+                    </div>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Form -->
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        
+        <!-- Patient Information Section -->
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">Patient Information</h3>
+                <div>
+                    <span class="badge bg-primary me-2">MRN: {{ search_mrn }}</span>
+                    <span class="badge bg-secondary">{{ search_transplant_number }}</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.patient_name.id_for_label }}" class="form-label">Patient Name</label>
+                            {{ form.patient_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.birth_date.id_for_label }}" class="form-label">Birth Date</label>
+                            {{ form.birth_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.age.id_for_label }}" class="form-label">Age</label>
+                            {{ form.age }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.gender.id_for_label }}" class="form-label">Gender</label>
+                            {{ form.gender }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.nationality.id_for_label }}" class="form-label">Nationality</label>
+                            {{ form.nationality }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.service.id_for_label }}" class="form-label">Service</label>
+                            {{ form.service }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.physician_name.id_for_label }}" class="form-label">Physician Name</label>
+                            {{ form.physician_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.patient_blood_group.id_for_label }}" class="form-label">Blood Group</label>
+                            {{ form.patient_blood_group }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.patient_cmv_status.id_for_label }}" class="form-label">CMV Status</label>
+                            {{ form.patient_cmv_status }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disease Information Section -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="card-title mb-0">Disease Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.diagnosis.id_for_label }}" class="form-label">Diagnosis</label>
+                            {{ form.diagnosis }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.disease_classification.id_for_label }}" class="form-label">Disease Classification</label>
+                            {{ form.disease_classification }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.disease_category.id_for_label }}" class="form-label">Disease Category</label>
+                            {{ form.disease_category }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.initial_diagnosis_date.id_for_label }}" class="form-label">Initial Diagnosis Date</label>
+                            {{ form.initial_diagnosis_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.disease_status.id_for_label }}" class="form-label">Disease Status</label>
+                            {{ form.disease_status }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.malignant_status.id_for_label }}" class="form-label">Malignant Status</label>
+                            {{ form.malignant_status }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transplant Information Section -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="card-title mb-0">Transplant Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.admission_date.id_for_label }}" class="form-label">Admission Date</label>
+                            {{ form.admission_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.transplant_date.id_for_label }}" class="form-label">Transplant Date</label>
+                            {{ form.transplant_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.conditioning_start_date.id_for_label }}" class="form-label">Conditioning Start Date</label>
+                            {{ form.conditioning_start_date }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.donor_type.id_for_label }}" class="form-label">Donor Type</label>
+                            {{ form.donor_type }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.transplant_type.id_for_label }}" class="form-label">Transplant Type</label>
+                            {{ form.transplant_type }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.stem_cell_source.id_for_label }}" class="form-label">Stem Cell Source</label>
+                            {{ form.stem_cell_source }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.conditioning_regimen.id_for_label }}" class="form-label">Conditioning Regimen</label>
+                            {{ form.conditioning_regimen }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.conditioning_intensity.id_for_label }}" class="form-label">Conditioning Intensity</label>
+                            {{ form.conditioning_intensity }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.cd34_positive.id_for_label }}" class="form-label">CD34+ Cell Count</label>
+                            {{ form.cd34_positive }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donor Information Section -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="card-title mb-0">Donor Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.donor_id.id_for_label }}" class="form-label">Donor ID</label>
+                            {{ form.donor_id }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.donor_relation.id_for_label }}" class="form-label">Donor Relation</label>
+                            {{ form.donor_relation }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.donor_birth_date.id_for_label }}" class="form-label">Donor Birth Date</label>
+                            {{ form.donor_birth_date }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.donor_age.id_for_label }}" class="form-label">Donor Age</label>
+                            {{ form.donor_age }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.donor_gender.id_for_label }}" class="form-label">Donor Gender</label>
+                            {{ form.donor_gender }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.donor_blood_group.id_for_label }}" class="form-label">Donor Blood Group</label>
+                            {{ form.donor_blood_group }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.donor_cmv_status.id_for_label }}" class="form-label">Donor CMV Status</label>
+                            {{ form.donor_cmv_status }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.hla.id_for_label }}" class="form-label">HLA Match</label>
+                            {{ form.hla }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.dr_sex_match.id_for_label }}" class="form-label">Donor-Recipient Sex Match</label>
+                            {{ form.dr_sex_match }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Engraftment Information Section -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="card-title mb-0">Engraftment Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.neutrophil_engraftment.id_for_label }}" class="form-label">Neutrophil Engraftment</label>
+                            {{ form.neutrophil_engraftment }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.neutrophil_engraftment_date.id_for_label }}" class="form-label">Neutrophil Engraftment Date</label>
+                            {{ form.neutrophil_engraftment_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.neutrophil_engraftment_days.id_for_label }}" class="form-label">Days to Neutrophil Engraftment</label>
+                            {{ form.neutrophil_engraftment_days }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.platelets_engraftment.id_for_label }}" class="form-label">Platelet Engraftment</label>
+                            {{ form.platelets_engraftment }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.platelets_engraftment_date.id_for_label }}" class="form-label">Platelet Engraftment Date</label>
+                            {{ form.platelets_engraftment_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.platelets_engraftment_days.id_for_label }}" class="form-label">Days to Platelet Engraftment</label>
+                            {{ form.platelets_engraftment_days }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GVHD Information Section -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="card-title mb-0">GVHD Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Acute GVHD -->
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Acute GVHD</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.acute_gvhd.id_for_label }}" class="form-label">Acute GVHD</label>
+                            {{ form.acute_gvhd }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.acute_gvhd_date.id_for_label }}" class="form-label">Diagnosis Date</label>
+                            {{ form.acute_gvhd_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.acute_gvhd_grade.id_for_label }}" class="form-label">Overall Grade</label>
+                            {{ form.acute_gvhd_grade }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ form.acute_gvhd_skin.id_for_label }}" class="form-label">Skin</label>
+                                    {{ form.acute_gvhd_skin }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ form.acute_gvhd_gut.id_for_label }}" class="form-label">Gut</label>
+                                    {{ form.acute_gvhd_gut }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ form.acute_gvhd_liver.id_for_label }}" class="form-label">Liver</label>
+                                    {{ form.acute_gvhd_liver }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chronic GVHD -->
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Chronic GVHD</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.chronic_gvhd.id_for_label }}" class="form-label">Chronic GVHD</label>
+                            {{ form.chronic_gvhd }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.chronic_gvhd_date.id_for_label }}" class="form-label">Diagnosis Date</label>
+                            {{ form.chronic_gvhd_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.chronic_gvhd_severity.id_for_label }}" class="form-label">Overall Severity</label>
+                            {{ form.chronic_gvhd_severity }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ form.chronic_gvhd_skin.id_for_label }}" class="form-label">Skin</label>
+                                    {{ form.chronic_gvhd_skin }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.chronic_gvhd_mouth.id_for_label }}" class="form-label">Mouth</label>
+                                    {{ form.chronic_gvhd_mouth }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.chronic_gvhd_eyes.id_for_label }}" class="form-label">Eyes</label>
+                                    {{ form.chronic_gvhd_eyes }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ form.chronic_gvhd_gi.id_for_label }}" class="form-label">GI Tract</label>
+                                    {{ form.chronic_gvhd_gi }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.chronic_gvhd_liver.id_for_label }}" class="form-label">Liver</label>
+                                    {{ form.chronic_gvhd_liver }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.chronic_gvhd_lungs.id_for_label }}" class="form-label">Lungs</label>
+                                    {{ form.chronic_gvhd_lungs }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ form.chronic_gvhd_joints.id_for_label }}" class="form-label">Joints/Fascia</label>
+                                    {{ form.chronic_gvhd_joints }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.chronic_gvhd_genital.id_for_label }}" class="form-label">Genital Tract</label>
+                                    {{ form.chronic_gvhd_genital }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Outcome Information Section -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="card-title mb-0">Outcome Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.discharge_date.id_for_label }}" class="form-label">Discharge Date</label>
+                            {{ form.discharge_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.hospitalization_days.id_for_label }}" class="form-label">Days of Hospitalization</label>
+                            {{ form.hospitalization_days }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.icu_admission_100d.id_for_label }}" class="form-label">ICU Admission within 100 Days</label>
+                            {{ form.icu_admission_100d }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.relapse_date.id_for_label }}" class="form-label">Relapse Date</label>
+                            {{ form.relapse_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.relapse_days.id_for_label }}" class="form-label">Days to Relapse</label>
+                            {{ form.relapse_days }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.relapse_site.id_for_label }}" class="form-label">Relapse Site</label>
+                            {{ form.relapse_site }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.death_date.id_for_label }}" class="form-label">Death Date</label>
+                            {{ form.death_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.cause_of_death.id_for_label }}" class="form-label">Cause of Death</label>
+                            {{ form.cause_of_death }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.transplant_related_cause.id_for_label }}" class="form-label">Transplant Related Cause</label>
+                            {{ form.transplant_related_cause }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Follow-up Information Section -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="card-title mb-0">Follow-up Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.last_followup_date.id_for_label }}" class="form-label">Last Follow-up Date</label>
+                            {{ form.last_followup_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.followup_type.id_for_label }}" class="form-label">Type of Last Follow-up</label>
+                            {{ form.followup_type }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.next_followup_date.id_for_label }}" class="form-label">Next Follow-up Due Date</label>
+                            {{ form.next_followup_date }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.next_followup_type.id_for_label }}" class="form-label">Type of Next Follow-up</label>
+                            {{ form.next_followup_type }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.followup_remarks.id_for_label }}" class="form-label">Follow-up Remarks</label>
+                            {{ form.followup_remarks }}
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ form.lost_to_followup }}
+                                <label class="form-check-label" for="{{ form.lost_to_followup.id_for_label }}">
+                                    Lost to Follow-up
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="{{ form.ebmt_notes.id_for_label }}" class="form-label">EBMT Notes</label>
+                            {{ form.ebmt_notes }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="card-footer d-flex justify-content-end">
+            <button type="button" class="btn btn-light me-2" onclick="clearForm()">Clear</button>
+            <button type="submit" class="btn btn-primary" {% if not show_form %}disabled{% endif %}>Save</button>
+        </div>
+    </form>
+
+    <!-- Activity Log -->
+    {% if activity_log %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4 class="card-title mb-0">Activity Log</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in activity_log %}
+                        <tr>
+                            <td>{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
+                            <td>{{ log.username }}</td>
+                            <td>{{ log.action_type }}</td>
+                            <td>{{ log.value_string }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function clearForm() {
+    if (confirm('Are you sure you want to clear the form? All unsaved data will be lost.')) {
+        window.location.href = '{% url "registries:bmt_form" %}';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Disable/Enable all form fields based on search status
+    const formFields = document.querySelectorAll('form:not(#searchForm) input, form:not(#searchForm) select, form:not(#searchForm) textarea');
+    const showForm = {{ show_form|yesno:"true,false" }};
+    
+    formFields.forEach(field => {
+        if (!field.classList.contains('exclude-disable')) {
+            field.disabled = !showForm;
+        }
+    });
+
+    // Form validation
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+});
+</script>
+
+<style>
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.03);
+    padding: 0.75rem 1.25rem;
+}
+
+.form-control:disabled {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+</style>
+{% endblock %} 

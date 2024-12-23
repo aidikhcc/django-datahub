@@ -61,7 +61,11 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Age</label>
-                            <input type="number" name="age" class="form-control" value="{{ event.age|default:'' }}" readonly>
+                            <input type="number" 
+                                   name="age" 
+                                   class="form-control" 
+                                   value="{{ event.age|default:'' }}" 
+                                   readonly>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -238,198 +242,193 @@
                             <label class="form-label">Department Initiated the Event</label>
                             <select name="department_initiated" class="form-select" required>
                                 <option value="">Select Department</option>
-                                <option value="Adult BMT clinic">Adult BMT clinic</option>
-                                <option value="Adult Chemotherapy Unit">Adult Chemotherapy Unit</option>
-                                <option value="Adult ER">Adult ER</option>
-                                <option value="Anesthesia">Anesthesia</option>
-                                <option value="Apheresis collection facility">Apheresis collection facility</option>
-                                <option value="Biomedical">Biomedical</option>
-                                <option value="BIU">BIU</option>
-                                <option value="Blood bank">Blood bank</option>
-                                <option value="BMT adult">BMT adult</option>
-                                <option value="BMT pediatric">BMT pediatric</option>
-                                <option value="Call center">Call center</option>
-                                <option value="Chemotherapy clinic">Chemotherapy clinic</option>
-                                <option value="Clinical program">Clinical program</option>
-                                <option value="CMO office">CMO office</option>
-                                <option value="Corridor">Corridor</option>
-                                <option value="CTAG BMT LAB (Processing Facility)">CTAG BMT LAB (Processing Facility)</option>
-                                <option value="Darwazah">Darwazah</option>
-                                <option value="Day case">Day case</option>
-                                <option value="Dialyses">Dialyses</option>
-                                <option value="Discharge planning office">Discharge planning office</option>
-                                <option value="Early detection clinic">Early detection clinic</option>
-                                <option value="Endoscopy">Endoscopy</option>
-                                <option value="Entrance">Entrance</option>
-                                <option value="General Adult Clinic">General Adult Clinic</option>
-                                <option value="Home care">Home care</option>
-                                <option value="Hospice/ Palliative service">Hospice/ Palliative service</option>
-                                <option value="ICU">ICU</option>
-                                <option value="ICU-Medical">ICU-Medical</option>
-                                <option value="ICU-Pediatric">ICU-Pediatric</option>
-                                <option value="IMU">IMU</option>
-                                <option value="Infection control">Infection control</option>
-                                <option value="Infusion unit">Infusion unit</option>
-                                <option value="Inpatient Pharmacy">Inpatient Pharmacy</option>
-                                <option value="Internal medicine">Internal medicine</option>
-                                <option value="International patient office">International patient office</option>
-                                <option value="Interventional">Interventional</option>
-                                <option value="IT">IT</option>
-                                <option value="Kitchen">Kitchen</option>
-                                <option value="Laboratory">Laboratory</option>
-                                <option value="Laundry">Laundry</option>
-                                <option value="Leukemia floor">Leukemia floor</option>
-                                <option value="Lung">Lung</option>
-                                <option value="Maintenance">Maintenance</option>
-                                <option value="Marrow collection facility">Marrow collection facility</option>
-                                <option value="Material management">Material management</option>
-                                <option value="Medical floor">Medical floor</option>
-                                <option value="Medical Oncology Clinic">Medical Oncology Clinic</option>
-                                <option value="Medical records">Medical records</option>
-                                <option value="Medical surgical">Medical surgical</option>
-                                <option value="Non-KHCC location">Non-KHCC location</option>
-                                <option value="Nuclear Medicine">Nuclear Medicine</option>
-                                <option value="Nursing">Nursing</option>
-                                <option value="OR">OR</option>
-                                <option value="Out KHCC">Out KHCC</option>
-                                <option value="Out reach mobile BIU">Out reach mobile BIU</option>
-                                <option value="Outpatient clinic">Outpatient clinic</option>
-                                <option value="Outpatient Pharmacy">Outpatient Pharmacy</option>
-                                <option value="Palliative Clinic">Palliative Clinic</option>
-                                <option value="Patient affair office">Patient affair office</option>
-                                <option value="Patient application">Patient application</option>
-                                <option value="Patient complain office">Patient complain office</option>
-                                <option value="Pediatric BMT clinic">Pediatric BMT clinic</option>
-                                <option value="Pediatric Chemotherapy">Pediatric Chemotherapy</option>
-                                <option value="Pediatric Clinic">Pediatric Clinic</option>
-                                <option value="Pediatric ER">Pediatric ER</option>
-                                <option value="Pediatric floor">Pediatric floor</option>
-                                <option value="Pediatric surgery">Pediatric surgery</option>
-                                <option value="Pediatrics Service">Pediatrics Service</option>
-                                <option value="Pharmacy">Pharmacy</option>
-                                <option value="Physician">Physician</option>
-                                <option value="Physiotherapy">Physiotherapy</option>
-                                <option value="Play therapy room">Play therapy room</option>
-                                <option value="Purchasing">Purchasing</option>
-                                <option value="Quality Management">Quality Management</option>
-                                <option value="Radiology">Radiology</option>
-                                <option value="Radiotherapy">Radiotherapy</option>
-                                <option value="Radiotherapy technician">Radiotherapy technician</option>
-                                <option value="Respiratory therapy">Respiratory therapy</option>
-                                <option value="Safety">Safety</option>
-                                <option value="Screening clinic">Screening clinic</option>
-                                <option value="Security">Security</option>
-                                <option value="Social Workers/Psychology">Social Workers/Psychology</option>
-                                <option value="Solid Tumor Service">Solid Tumor Service</option>
-                                <option value="Surgeon">Surgeon</option>
-                                <option value="Surgical floor">Surgical floor</option>
-                                <option value="Surgical Service">Surgical Service</option>
-                                <option value="VAD">VAD</option>
-                                <option value="VIP">VIP</option>
-                                <option value="Waiting area">Waiting area</option>
+                                <option value="Adult BMT clinic" {% if event.department_initiated == "Adult BMT clinic" %}selected{% endif %}>Adult BMT clinic</option>
+                                <option value="Adult Chemotherapy Unit" {% if event.department_initiated == "Adult Chemotherapy Unit" %}selected{% endif %}>Adult Chemotherapy Unit</option>
+                                <option value="Adult ER" {% if event.department_initiated == "Adult ER" %}selected{% endif %}>Adult ER</option>
+                                <option value="Anesthesia" {% if event.department_initiated == "Anesthesia" %}selected{% endif %}>Anesthesia</option>
+                                <option value="Apheresis collection facility" {% if event.department_initiated == "Apheresis collection facility" %}selected{% endif %}>Apheresis collection facility</option>
+                                <option value="Biomedical" {% if event.department_initiated == "Biomedical" %}selected{% endif %}>Biomedical</option>
+                                <option value="BIU" {% if event.department_initiated == "BIU" %}selected{% endif %}>BIU</option>
+                                <option value="Blood bank" {% if event.department_initiated == "Blood bank" %}selected{% endif %}>Blood bank</option>
+                                <option value="BMT adult" {% if event.department_initiated == "BMT adult" %}selected{% endif %}>BMT adult</option>
+                                <option value="BMT pediatric" {% if event.department_initiated == "BMT pediatric" %}selected{% endif %}>BMT pediatric</option>
+                                <option value="Call center" {% if event.department_initiated == "Call center" %}selected{% endif %}>Call center</option>
+                                <option value="Chemotherapy clinic" {% if event.department_initiated == "Chemotherapy clinic" %}selected{% endif %}>Chemotherapy clinic</option>
+                                <option value="Clinical program" {% if event.department_initiated == "Clinical program" %}selected{% endif %}>Clinical program</option>
+                                <option value="CMO office" {% if event.department_initiated == "CMO office" %}selected{% endif %}>CMO office</option>
+                                <option value="Corridor" {% if event.department_initiated == "Corridor" %}selected{% endif %}>Corridor</option>
+                                <option value="CTAG BMT LAB (Processing Facility)" {% if event.department_initiated == "CTAG BMT LAB (Processing Facility)" %}selected{% endif %}>CTAG BMT LAB (Processing Facility)</option>
+                                <option value="Darwazah" {% if event.department_initiated == "Darwazah" %}selected{% endif %}>Darwazah</option>
+                                <option value="Day case" {% if event.department_initiated == "Day case" %}selected{% endif %}>Day case</option>
+                                <option value="Dialyses" {% if event.department_initiated == "Dialyses" %}selected{% endif %}>Dialyses</option>
+                                <option value="Discharge planning office" {% if event.department_initiated == "Discharge planning office" %}selected{% endif %}>Discharge planning office</option>
+                                <option value="Early detection clinic" {% if event.department_initiated == "Early detection clinic" %}selected{% endif %}>Early detection clinic</option>
+                                <option value="Endoscopy" {% if event.department_initiated == "Endoscopy" %}selected{% endif %}>Endoscopy</option>
+                                <option value="Entrance" {% if event.department_initiated == "Entrance" %}selected{% endif %}>Entrance</option>
+                                <option value="General Adult Clinic" {% if event.department_initiated == "General Adult Clinic" %}selected{% endif %}>General Adult Clinic</option>
+                                <option value="Home care" {% if event.department_initiated == "Home care" %}selected{% endif %}>Home care</option>
+                                <option value="Hospice/ Palliative service" {% if event.department_initiated == "Hospice/ Palliative service" %}selected{% endif %}>Hospice/ Palliative service</option>
+                                <option value="ICU" {% if event.department_initiated == "ICU" %}selected{% endif %}>ICU</option>
+                                <option value="ICU-Medical" {% if event.department_initiated == "ICU-Medical" %}selected{% endif %}>ICU-Medical</option>
+                                <option value="ICU-Pediatric" {% if event.department_initiated == "ICU-Pediatric" %}selected{% endif %}>ICU-Pediatric</option>
+                                <option value="IMU" {% if event.department_initiated == "IMU" %}selected{% endif %}>IMU</option>
+                                <option value="Infection control" {% if event.department_initiated == "Infection control" %}selected{% endif %}>Infection control</option>
+                                <option value="Infusion unit" {% if event.department_initiated == "Infusion unit" %}selected{% endif %}>Infusion unit</option>
+                                <option value="Inpatient Pharmacy" {% if event.department_initiated == "Inpatient Pharmacy" %}selected{% endif %}>Inpatient Pharmacy</option>
+                                <option value="Internal medicine" {% if event.department_initiated == "Internal medicine" %}selected{% endif %}>Internal medicine</option>
+                                <option value="International patient office" {% if event.department_initiated == "International patient office" %}selected{% endif %}>International patient office</option>
+                                <option value="Interventional" {% if event.department_initiated == "Interventional" %}selected{% endif %}>Interventional</option>
+                                <option value="IT" {% if event.department_initiated == "IT" %}selected{% endif %}>IT</option>
+                                <option value="Kitchen" {% if event.department_initiated == "Kitchen" %}selected{% endif %}>Kitchen</option>
+                                <option value="Laboratory" {% if event.department_initiated == "Laboratory" %}selected{% endif %}>Laboratory</option>
+                                <option value="Laundry" {% if event.department_initiated == "Laundry" %}selected{% endif %}>Laundry</option>
+                                <option value="Leukemia floor" {% if event.department_initiated == "Leukemia floor" %}selected{% endif %}>Leukemia floor</option>
+                                <option value="Lung" {% if event.department_initiated == "Lung" %}selected{% endif %}>Lung</option>
+                                <option value="Maintenance" {% if event.department_initiated == "Maintenance" %}selected{% endif %}>Maintenance</option>
+                                <option value="Marrow collection facility" {% if event.department_initiated == "Marrow collection facility" %}selected{% endif %}>Marrow collection facility</option>
+                                <option value="Material management" {% if event.department_initiated == "Material management" %}selected{% endif %}>Material management</option>
+                                <option value="Medical floor" {% if event.department_initiated == "Medical floor" %}selected{% endif %}>Medical floor</option>
+                                <option value="Medical Oncology Clinic" {% if event.department_initiated == "Medical Oncology Clinic" %}selected{% endif %}>Medical Oncology Clinic</option>
+                                <option value="Medical records" {% if event.department_initiated == "Medical records" %}selected{% endif %}>Medical records</option>
+                                <option value="Medical surgical" {% if event.department_initiated == "Medical surgical" %}selected{% endif %}>Medical surgical</option>
+                                <option value="Non-KHCC location" {% if event.department_initiated == "Non-KHCC location" %}selected{% endif %}>Non-KHCC location</option>
+                                <option value="Nuclear Medicine" {% if event.department_initiated == "Nuclear Medicine" %}selected{% endif %}>Nuclear Medicine</option>
+                                <option value="Nursing" {% if event.department_initiated == "Nursing" %}selected{% endif %}>Nursing</option>
+                                <option value="OR" {% if event.department_initiated == "OR" %}selected{% endif %}>OR</option>
+                                <option value="Out KHCC" {% if event.department_initiated == "Out KHCC" %}selected{% endif %}>Out KHCC</option>
+                                <option value="Out reach mobile BIU" {% if event.department_initiated == "Out reach mobile BIU" %}selected{% endif %}>Out reach mobile BIU</option>
+                                <option value="Outpatient clinic" {% if event.department_initiated == "Outpatient clinic" %}selected{% endif %}>Outpatient clinic</option>
+                                <option value="Outpatient Pharmacy" {% if event.department_initiated == "Outpatient Pharmacy" %}selected{% endif %}>Outpatient Pharmacy</option>
+                                <option value="Palliative Clinic" {% if event.department_initiated == "Palliative Clinic" %}selected{% endif %}>Palliative Clinic</option>
+                                <option value="Patient affair office" {% if event.department_initiated == "Patient affair office" %}selected{% endif %}>Patient affair office</option>
+                                <option value="Patient application" {% if event.department_initiated == "Patient application" %}selected{% endif %}>Patient application</option>
+                                <option value="Patient complain office" {% if event.department_initiated == "Patient complain office" %}selected{% endif %}>Patient complain office</option>
+                                <option value="Pediatric BMT clinic" {% if event.department_initiated == "Pediatric BMT clinic" %}selected{% endif %}>Pediatric BMT clinic</option>
+                                <option value="Pediatric Chemotherapy" {% if event.department_initiated == "Pediatric Chemotherapy" %}selected{% endif %}>Pediatric Chemotherapy</option>
+                                <option value="Pediatric Clinic" {% if event.department_initiated == "Pediatric Clinic" %}selected{% endif %}>Pediatric Clinic</option>
+                                <option value="Pediatric ER" {% if event.department_initiated == "Pediatric ER" %}selected{% endif %}>Pediatric ER</option>
+                                <option value="Pediatric floor" {% if event.department_initiated == "Pediatric floor" %}selected{% endif %}>Pediatric floor</option>
+                                <option value="Pediatric surgery" {% if event.department_initiated == "Pediatric surgery" %}selected{% endif %}>Pediatric surgery</option>
+                                <option value="Pediatrics Service" {% if event.department_initiated == "Pediatrics Service" %}selected{% endif %}>Pediatrics Service</option>
+                                <option value="Pharmacy" {% if event.department_initiated == "Pharmacy" %}selected{% endif %}>Pharmacy</option>
+                                <option value="Physician" {% if event.department_initiated == "Physician" %}selected{% endif %}>Physician</option>
+                                <option value="Physiotherapy" {% if event.department_initiated == "Physiotherapy" %}selected{% endif %}>Physiotherapy</option>
+                                <option value="Play therapy room" {% if event.department_initiated == "Play therapy room" %}selected{% endif %}>Play therapy room</option>
+                                <option value="Purchasing" {% if event.department_initiated == "Purchasing" %}selected{% endif %}>Purchasing</option>
+                                <option value="Quality Management" {% if event.department_initiated == "Quality Management" %}selected{% endif %}>Quality Management</option>
+                                <option value="Radiology" {% if event.department_initiated == "Radiology" %}selected{% endif %}>Radiology</option>
+                                <option value="Radiotherapy" {% if event.department_initiated == "Radiotherapy" %}selected{% endif %}>Radiotherapy</option>
+                                <option value="Radiotherapy technician" {% if event.department_initiated == "Radiotherapy technician" %}selected{% endif %}>Radiotherapy technician</option>
+                                <option value="Respiratory therapy" {% if event.department_initiated == "Respiratory therapy" %}selected{% endif %}>Respiratory therapy</option>
+                                <option value="Safety" {% if event.department_initiated == "Safety" %}selected{% endif %}>Safety</option>
+                                <option value="Screening clinic" {% if event.department_initiated == "Screening clinic" %}selected{% endif %}>Screening clinic</option>
+                                <option value="Security" {% if event.department_initiated == "Security" %}selected{% endif %}>Security</option>
+                                <option value="Social Workers/Psychology" {% if event.department_initiated == "Social Workers/Psychology" %}selected{% endif %}>Social Workers/Psychology</option>
+                                <option value="Solid Tumor Service" {% if event.department_initiated == "Solid Tumor Service" %}selected{% endif %}>Solid Tumor Service</option>
+                                <option value="Surgeon" {% if event.department_initiated == "Surgeon" %}selected{% endif %}>Surgeon</option>
+                                <option value="Surgical floor" {% if event.department_initiated == "Surgical floor" %}selected{% endif %}>Surgical floor</option>
+                                <option value="Surgical Service" {% if event.department_initiated == "Surgical Service" %}selected{% endif %}>Surgical Service</option>
+                                <option value="VAD" {% if event.department_initiated == "VAD" %}selected{% endif %}>VAD</option>
+                                <option value="VIP" {% if event.department_initiated == "VIP" %}selected{% endif %}>VIP</option>
+                                <option value="Waiting area" {% if event.department_initiated == "Waiting area" %}selected{% endif %}>Waiting area</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-3">
+                        <!-- Department Unit Involved -->
                         <div class="mb-3">
                             <label class="form-label">Department Unit Involved</label>
                             <select name="department_unit_involved" class="form-select">
                                 <option value="">Select Department Unit</option>
-                                <option value="Adult BMT clinic">Adult BMT clinic</option>
-                                <option value="Adult Chemotherapy Unit">Adult Chemotherapy Unit</option>
-                                <option value="Adult ER">Adult ER</option>
-                                <option value="Anesthesia">Anesthesia</option>
-                                <option value="Apheresis collection facility">Apheresis collection facility</option>
-                                <option value="Biomedical">Biomedical</option>
-                                <option value="BIU">BIU</option>
-                                <option value="Blood bank">Blood bank</option>
-                                <option value="BMT adult">BMT adult</option>
-                                <option value="BMT Clinic">BMT Clinic</option>
-                                <option value="BMT pediatric">BMT pediatric</option>
-                                <option value="BMT unit">BMT unit</option>
-                                <option value="Call center">Call center</option>
-                                <option value="Chemotherapy clinic">Chemotherapy clinic</option>
-                                <option value="Clinical program">Clinical program</option>
-                                <option value="CMO office">CMO office</option>
-                                <option value="Corridor">Corridor</option>
-                                <option value="CTAG BMT LAB (Processing Facility)">CTAG BMT LAB (Processing Facility)</option>
-                                <option value="Darwazah">Darwazah</option>
-                                <option value="Day case">Day case</option>
-                                <option value="Dialyses">Dialyses</option>
-                                <option value="Discharge planning office">Discharge planning office</option>
-                                <option value="Early detection clinic">Early detection clinic</option>
-                                <option value="Endoscopy">Endoscopy</option>
-                                <option value="Entrance">Entrance</option>
-                                <option value="ER">ER</option>
-                                <option value="General Adult Clinic">General Adult Clinic</option>
-                                <option value="Home care">Home care</option>
-                                <option value="Hospice/ Palliative service">Hospice/ Palliative service</option>
-                                <option value="ICU">ICU</option>
-                                <option value="ICU-Medical">ICU-Medical</option>
-                                <option value="ICU-Pediatric">ICU-Pediatric</option>
-                                <option value="IMU">IMU</option>
-                                <option value="Infection control">Infection control</option>
-                                <option value="Infusion unit">Infusion unit</option>
-                                <option value="Inpatient Pharmacy">Inpatient Pharmacy</option>
-                                <option value="Internal medicine">Internal medicine</option>
-                                <option value="International patient office">International patient office</option>
-                                <option value="Interventional">Interventional</option>
-                                <option value="IT">IT</option>
-                                <option value="Kitchen">Kitchen</option>
-                                <option value="Laboratory">Laboratory</option>
-                                <option value="Laundry">Laundry</option>
-                                <option value="Leukemia floor">Leukemia floor</option>
-                                <option value="Leukemia service">Leukemia service</option>
-                                <option value="Lung">Lung</option>
-                                <option value="Maintenance">Maintenance</option>
-                                <option value="Marrow collection facility">Marrow collection facility</option>
-                                <option value="Material management">Material management</option>
-                                <option value="Medical floor">Medical floor</option>
-                                <option value="Medical Oncology Clinic">Medical Oncology Clinic</option>
-                                <option value="Medical records">Medical records</option>
-                                <option value="Medical surgical">Medical surgical</option>
-                                <option value="Non-KHCC location">Non-KHCC location</option>
-                                <option value="Nuclear Medicine">Nuclear Medicine</option>
-                                <option value="Nursing">Nursing</option>
-                                <option value="OR">OR</option>
-                                <option value="Out KHCC">Out KHCC</option>
-                                <option value="Out reach mobile BIU">Out reach mobile BIU</option>
-                                <option value="Outpatient clinic">Outpatient clinic</option>
-                                <option value="Outpatient Pharmacy">Outpatient Pharmacy</option>
-                                <option value="Palliative Clinic">Palliative Clinic</option>
-                                <option value="Patient affair office">Patient affair office</option>
-                                <option value="Patient application">Patient application</option>
-                                <option value="Patient complain office">Patient complain office</option>
-                                <option value="Pediatric BMT clinic">Pediatric BMT clinic</option>
-                                <option value="Pediatric Chemotherapy">Pediatric Chemotherapy</option>
-                                <option value="Pediatric Clinic">Pediatric Clinic</option>
-                                <option value="Pediatric ER">Pediatric ER</option>
-                                <option value="Pediatric floor">Pediatric floor</option>
-                                <option value="Pediatric surgery">Pediatric surgery</option>
-                                <option value="Pediatrics ER">Pediatrics ER</option>
-                                <option value="Pediatrics Service">Pediatrics Service</option>
-                                <option value="Pharmacy">Pharmacy</option>
-                                <option value="Physician">Physician</option>
-                                <option value="Physiotherapy">Physiotherapy</option>
-                                <option value="Play therapy room">Play therapy room</option>
-                                <option value="Pre admission unit">Pre admission unit</option>
-                                <option value="Purchasing">Purchasing</option>
-                                <option value="Quality Management">Quality Management</option>
-                                <option value="Radiology">Radiology</option>
-                                <option value="Radiotherapy">Radiotherapy</option>
-                                <option value="Radiotherapy technician">Radiotherapy technician</option>
-                                <option value="Respiratory therapy">Respiratory therapy</option>
-                                <option value="Safety">Safety</option>
-                                <option value="Screening clinic">Screening clinic</option>
-                                <option value="Security">Security</option>
-                                <option value="Social Workers/Psychology">Social Workers/Psychology</option>
-                                <option value="Solid Tumor Service">Solid Tumor Service</option>
-                                <option value="Surgeon">Surgeon</option>
-                                <option value="Surgical floor">Surgical floor</option>
-                                <option value="Surgical Service">Surgical Service</option>
-                                <option value="VAD">VAD</option>
-                                <option value="VIP">VIP</option>
-                                <option value="Waiting area">Waiting area</option>
+                                <option value="Adult BMT clinic" {% if event.department_unit_involved == "Adult BMT clinic" %}selected{% endif %}>Adult BMT clinic</option>
+                                <option value="Adult Chemotherapy Unit" {% if event.department_unit_involved == "Adult Chemotherapy Unit" %}selected{% endif %}>Adult Chemotherapy Unit</option>
+                                <option value="Adult ER" {% if event.department_unit_involved == "Adult ER" %}selected{% endif %}>Adult ER</option>
+                                <option value="Anesthesia" {% if event.department_unit_involved == "Anesthesia" %}selected{% endif %}>Anesthesia</option>
+                                <option value="Apheresis collection facility" {% if event.department_unit_involved == "Apheresis collection facility" %}selected{% endif %}>Apheresis collection facility</option>
+                                <option value="Biomedical" {% if event.department_unit_involved == "Biomedical" %}selected{% endif %}>Biomedical</option>
+                                <option value="BIU" {% if event.department_unit_involved == "BIU" %}selected{% endif %}>BIU</option>
+                                <option value="Blood bank" {% if event.department_unit_involved == "Blood bank" %}selected{% endif %}>Blood bank</option>
+                                <option value="BMT adult" {% if event.department_unit_involved == "BMT adult" %}selected{% endif %}>BMT adult</option>
+                                <option value="BMT pediatric" {% if event.department_unit_involved == "BMT pediatric" %}selected{% endif %}>BMT pediatric</option>
+                                <option value="Call center" {% if event.department_unit_involved == "Call center" %}selected{% endif %}>Call center</option>
+                                <option value="Chemotherapy clinic" {% if event.department_unit_involved == "Chemotherapy clinic" %}selected{% endif %}>Chemotherapy clinic</option>
+                                <option value="Clinical program" {% if event.department_unit_involved == "Clinical program" %}selected{% endif %}>Clinical program</option>
+                                <option value="CMO office" {% if event.department_unit_involved == "CMO office" %}selected{% endif %}>CMO office</option>
+                                <option value="Corridor" {% if event.department_unit_involved == "Corridor" %}selected{% endif %}>Corridor</option>
+                                <option value="CTAG BMT LAB (Processing Facility)" {% if event.department_unit_involved == "CTAG BMT LAB (Processing Facility)" %}selected{% endif %}>CTAG BMT LAB (Processing Facility)</option>
+                                <option value="Darwazah" {% if event.department_unit_involved == "Darwazah" %}selected{% endif %}>Darwazah</option>
+                                <option value="Day case" {% if event.department_unit_involved == "Day case" %}selected{% endif %}>Day case</option>
+                                <option value="Dialyses" {% if event.department_unit_involved == "Dialyses" %}selected{% endif %}>Dialyses</option>
+                                <option value="Discharge planning office" {% if event.department_unit_involved == "Discharge planning office" %}selected{% endif %}>Discharge planning office</option>
+                                <option value="Early detection clinic" {% if event.department_unit_involved == "Early detection clinic" %}selected{% endif %}>Early detection clinic</option>
+                                <option value="Endoscopy" {% if event.department_unit_involved == "Endoscopy" %}selected{% endif %}>Endoscopy</option>
+                                <option value="Entrance" {% if event.department_unit_involved == "Entrance" %}selected{% endif %}>Entrance</option>
+                                <option value="General Adult Clinic" {% if event.department_unit_involved == "General Adult Clinic" %}selected{% endif %}>General Adult Clinic</option>
+                                <option value="Home care" {% if event.department_unit_involved == "Home care" %}selected{% endif %}>Home care</option>
+                                <option value="Hospice/ Palliative service" {% if event.department_unit_involved == "Hospice/ Palliative service" %}selected{% endif %}>Hospice/ Palliative service</option>
+                                <option value="ICU" {% if event.department_unit_involved == "ICU" %}selected{% endif %}>ICU</option>
+                                <option value="ICU-Medical" {% if event.department_unit_involved == "ICU-Medical" %}selected{% endif %}>ICU-Medical</option>
+                                <option value="ICU-Pediatric" {% if event.department_unit_involved == "ICU-Pediatric" %}selected{% endif %}>ICU-Pediatric</option>
+                                <option value="IMU" {% if event.department_unit_involved == "IMU" %}selected{% endif %}>IMU</option>
+                                <option value="Infection control" {% if event.department_unit_involved == "Infection control" %}selected{% endif %}>Infection control</option>
+                                <option value="Infusion unit" {% if event.department_unit_involved == "Infusion unit" %}selected{% endif %}>Infusion unit</option>
+                                <option value="Inpatient Pharmacy" {% if event.department_unit_involved == "Inpatient Pharmacy" %}selected{% endif %}>Inpatient Pharmacy</option>
+                                <option value="Internal medicine" {% if event.department_unit_involved == "Internal medicine" %}selected{% endif %}>Internal medicine</option>
+                                <option value="International patient office" {% if event.department_unit_involved == "International patient office" %}selected{% endif %}>International patient office</option>
+                                <option value="Interventional" {% if event.department_unit_involved == "Interventional" %}selected{% endif %}>Interventional</option>
+                                <option value="IT" {% if event.department_unit_involved == "IT" %}selected{% endif %}>IT</option>
+                                <option value="Kitchen" {% if event.department_unit_involved == "Kitchen" %}selected{% endif %}>Kitchen</option>
+                                <option value="Laboratory" {% if event.department_unit_involved == "Laboratory" %}selected{% endif %}>Laboratory</option>
+                                <option value="Laundry" {% if event.department_unit_involved == "Laundry" %}selected{% endif %}>Laundry</option>
+                                <option value="Leukemia floor" {% if event.department_unit_involved == "Leukemia floor" %}selected{% endif %}>Leukemia floor</option>
+                                <option value="Lung" {% if event.department_unit_involved == "Lung" %}selected{% endif %}>Lung</option>
+                                <option value="Maintenance" {% if event.department_unit_involved == "Maintenance" %}selected{% endif %}>Maintenance</option>
+                                <option value="Marrow collection facility" {% if event.department_unit_involved == "Marrow collection facility" %}selected{% endif %}>Marrow collection facility</option>
+                                <option value="Material management" {% if event.department_unit_involved == "Material management" %}selected{% endif %}>Material management</option>
+                                <option value="Medical floor" {% if event.department_unit_involved == "Medical floor" %}selected{% endif %}>Medical floor</option>
+                                <option value="Medical Oncology Clinic" {% if event.department_unit_involved == "Medical Oncology Clinic" %}selected{% endif %}>Medical Oncology Clinic</option>
+                                <option value="Medical records" {% if event.department_unit_involved == "Medical records" %}selected{% endif %}>Medical records</option>
+                                <option value="Medical surgical" {% if event.department_unit_involved == "Medical surgical" %}selected{% endif %}>Medical surgical</option>
+                                <option value="Non-KHCC location" {% if event.department_unit_involved == "Non-KHCC location" %}selected{% endif %}>Non-KHCC location</option>
+                                <option value="Nuclear Medicine" {% if event.department_unit_involved == "Nuclear Medicine" %}selected{% endif %}>Nuclear Medicine</option>
+                                <option value="Nursing" {% if event.department_unit_involved == "Nursing" %}selected{% endif %}>Nursing</option>
+                                <option value="OR" {% if event.department_unit_involved == "OR" %}selected{% endif %}>OR</option>
+                                <option value="Out KHCC" {% if event.department_unit_involved == "Out KHCC" %}selected{% endif %}>Out KHCC</option>
+                                <option value="Out reach mobile BIU" {% if event.department_unit_involved == "Out reach mobile BIU" %}selected{% endif %}>Out reach mobile BIU</option>
+                                <option value="Outpatient clinic" {% if event.department_unit_involved == "Outpatient clinic" %}selected{% endif %}>Outpatient clinic</option>
+                                <option value="Outpatient Pharmacy" {% if event.department_unit_involved == "Outpatient Pharmacy" %}selected{% endif %}>Outpatient Pharmacy</option>
+                                <option value="Palliative Clinic" {% if event.department_unit_involved == "Palliative Clinic" %}selected{% endif %}>Palliative Clinic</option>
+                                <option value="Patient affair office" {% if event.department_unit_involved == "Patient affair office" %}selected{% endif %}>Patient affair office</option>
+                                <option value="Patient application" {% if event.department_unit_involved == "Patient application" %}selected{% endif %}>Patient application</option>
+                                <option value="Patient complain office" {% if event.department_unit_involved == "Patient complain office" %}selected{% endif %}>Patient complain office</option>
+                                <option value="Pediatric BMT clinic" {% if event.department_unit_involved == "Pediatric BMT clinic" %}selected{% endif %}>Pediatric BMT clinic</option>
+                                <option value="Pediatric Chemotherapy" {% if event.department_unit_involved == "Pediatric Chemotherapy" %}selected{% endif %}>Pediatric Chemotherapy</option>
+                                <option value="Pediatric Clinic" {% if event.department_unit_involved == "Pediatric Clinic" %}selected{% endif %}>Pediatric Clinic</option>
+                                <option value="Pediatric ER" {% if event.department_unit_involved == "Pediatric ER" %}selected{% endif %}>Pediatric ER</option>
+                                <option value="Pediatric floor" {% if event.department_unit_involved == "Pediatric floor" %}selected{% endif %}>Pediatric floor</option>
+                                <option value="Pediatric surgery" {% if event.department_unit_involved == "Pediatric surgery" %}selected{% endif %}>Pediatric surgery</option>
+                                <option value="Pediatrics Service" {% if event.department_unit_involved == "Pediatrics Service" %}selected{% endif %}>Pediatrics Service</option>
+                                <option value="Pharmacy" {% if event.department_unit_involved == "Pharmacy" %}selected{% endif %}>Pharmacy</option>
+                                <option value="Physician" {% if event.department_unit_involved == "Physician" %}selected{% endif %}>Physician</option>
+                                <option value="Physiotherapy" {% if event.department_unit_involved == "Physiotherapy" %}selected{% endif %}>Physiotherapy</option>
+                                <option value="Play therapy room" {% if event.department_unit_involved == "Play therapy room" %}selected{% endif %}>Play therapy room</option>
+                                <option value="Purchasing" {% if event.department_unit_involved == "Purchasing" %}selected{% endif %}>Purchasing</option>
+                                <option value="Quality Management" {% if event.department_unit_involved == "Quality Management" %}selected{% endif %}>Quality Management</option>
+                                <option value="Radiology" {% if event.department_unit_involved == "Radiology" %}selected{% endif %}>Radiology</option>
+                                <option value="Radiotherapy" {% if event.department_unit_involved == "Radiotherapy" %}selected{% endif %}>Radiotherapy</option>
+                                <option value="Radiotherapy technician" {% if event.department_unit_involved == "Radiotherapy technician" %}selected{% endif %}>Radiotherapy technician</option>
+                                <option value="Respiratory therapy" {% if event.department_unit_involved == "Respiratory therapy" %}selected{% endif %}>Respiratory therapy</option>
+                                <option value="Safety" {% if event.department_unit_involved == "Safety" %}selected{% endif %}>Safety</option>
+                                <option value="Screening clinic" {% if event.department_unit_involved == "Screening clinic" %}selected{% endif %}>Screening clinic</option>
+                                <option value="Security" {% if event.department_unit_involved == "Security" %}selected{% endif %}>Security</option>
+                                <option value="Social Workers/Psychology" {% if event.department_unit_involved == "Social Workers/Psychology" %}selected{% endif %}>Social Workers/Psychology</option>
+                                <option value="Solid Tumor Service" {% if event.department_unit_involved == "Solid Tumor Service" %}selected{% endif %}>Solid Tumor Service</option>
+                                <option value="Surgeon" {% if event.department_unit_involved == "Surgeon" %}selected{% endif %}>Surgeon</option>
+                                <option value="Surgical floor" {% if event.department_unit_involved == "Surgical floor" %}selected{% endif %}>Surgical floor</option>
+                                <option value="Surgical Service" {% if event.department_unit_involved == "Surgical Service" %}selected{% endif %}>Surgical Service</option>
+                                <option value="VAD" {% if event.department_unit_involved == "VAD" %}selected{% endif %}>VAD</option>
+                                <option value="VIP" {% if event.department_unit_involved == "VIP" %}selected{% endif %}>VIP</option>
+                                <option value="Waiting area" {% if event.department_unit_involved == "Waiting area" %}selected{% endif %}>Waiting area</option>
                             </select>
                         </div>
                     </div>
@@ -438,101 +437,95 @@
                             <label class="form-label">Department Unit Involved 2</label>
                             <select name="department_unit_involved_2" class="form-select">
                                 <option value="">Select Department Unit</option>
-                                <option value="Adult BMT clinic">Adult BMT clinic</option>
-                                <option value="Adult Chemotherapy Unit">Adult Chemotherapy Unit</option>
-                                <option value="Adult ER">Adult ER</option>
-                                <option value="Anesthesia">Anesthesia</option>
-                                <option value="Apheresis collection facility">Apheresis collection facility</option>
-                                <option value="Biomedical">Biomedical</option>
-                                <option value="BIU">BIU</option>
-                                <option value="Blood bank">Blood bank</option>
-                                <option value="BMT adult">BMT adult</option>
-                                <option value="BMT Clinic">BMT Clinic</option>
-                                <option value="BMT pediatric">BMT pediatric</option>
-                                <option value="BMT unit">BMT unit</option>
-                                <option value="Call center">Call center</option>
-                                <option value="Chemotherapy clinic">Chemotherapy clinic</option>
-                                <option value="Clinical program">Clinical program</option>
-                                <option value="CMO office">CMO office</option>
-                                <option value="Corridor">Corridor</option>
-                                <option value="CTAG BMT LAB (Processing Facility)">CTAG BMT LAB (Processing Facility)</option>
-                                <option value="Darwazah">Darwazah</option>
-                                <option value="Day case">Day case</option>
-                                <option value="Dialyses">Dialyses</option>
-                                <option value="Discharge planning office">Discharge planning office</option>
-                                <option value="Early detection clinic">Early detection clinic</option>
-                                <option value="Endoscopy">Endoscopy</option>
-                                <option value="Entrance">Entrance</option>
-                                <option value="ER">ER</option>
-                                <option value="General Adult Clinic">General Adult Clinic</option>
-                                <option value="Home care">Home care</option>
-                                <option value="Hospice/ Palliative service">Hospice/ Palliative service</option>
-                                <option value="ICU">ICU</option>
-                                <option value="ICU-Medical">ICU-Medical</option>
-                                <option value="ICU-Pediatric">ICU-Pediatric</option>
-                                <option value="IMU">IMU</option>
-                                <option value="Infection control">Infection control</option>
-                                <option value="Infusion unit">Infusion unit</option>
-                                <option value="Inpatient Pharmacy">Inpatient Pharmacy</option>
-                                <option value="Internal medicine">Internal medicine</option>
-                                <option value="International patient office">International patient office</option>
-                                <option value="Interventional">Interventional</option>
-                                <option value="IT">IT</option>
-                                <option value="Kitchen">Kitchen</option>
-                                <option value="Laboratory">Laboratory</option>
-                                <option value="Laundry">Laundry</option>
-                                <option value="Leukemia floor">Leukemia floor</option>
-                                <option value="Leukemia service">Leukemia service</option>
-                                <option value="Lung">Lung</option>
-                                <option value="Maintenance">Maintenance</option>
-                                <option value="Marrow collection facility">Marrow collection facility</option>
-                                <option value="Material management">Material management</option>
-                                <option value="Medical floor">Medical floor</option>
-                                <option value="Medical Oncology Clinic">Medical Oncology Clinic</option>
-                                <option value="Medical records">Medical records</option>
-                                <option value="Medical surgical">Medical surgical</option>
-                                <option value="Non-KHCC location">Non-KHCC location</option>
-                                <option value="Nuclear Medicine">Nuclear Medicine</option>
-                                <option value="Nursing">Nursing</option>
-                                <option value="OR">OR</option>
-                                <option value="Out KHCC">Out KHCC</option>
-                                <option value="Out reach mobile BIU">Out reach mobile BIU</option>
-                                <option value="Outpatient clinic">Outpatient clinic</option>
-                                <option value="Outpatient Pharmacy">Outpatient Pharmacy</option>
-                                <option value="Palliative Clinic">Palliative Clinic</option>
-                                <option value="Patient affair office">Patient affair office</option>
-                                <option value="Patient application">Patient application</option>
-                                <option value="Patient complain office">Patient complain office</option>
-                                <option value="Pediatric BMT clinic">Pediatric BMT clinic</option>
-                                <option value="Pediatric Chemotherapy">Pediatric Chemotherapy</option>
-                                <option value="Pediatric Clinic">Pediatric Clinic</option>
-                                <option value="Pediatric ER">Pediatric ER</option>
-                                <option value="Pediatric floor">Pediatric floor</option>
-                                <option value="Pediatric surgery">Pediatric surgery</option>
-                                <option value="Pediatrics ER">Pediatrics ER</option>
-                                <option value="Pediatrics Service">Pediatrics Service</option>
-                                <option value="Pharmacy">Pharmacy</option>
-                                <option value="Physician">Physician</option>
-                                <option value="Physiotherapy">Physiotherapy</option>
-                                <option value="Play therapy room">Play therapy room</option>
-                                <option value="Pre admission unit">Pre admission unit</option>
-                                <option value="Purchasing">Purchasing</option>
-                                <option value="Quality Management">Quality Management</option>
-                                <option value="Radiology">Radiology</option>
-                                <option value="Radiotherapy">Radiotherapy</option>
-                                <option value="Radiotherapy technician">Radiotherapy technician</option>
-                                <option value="Respiratory therapy">Respiratory therapy</option>
-                                <option value="Safety">Safety</option>
-                                <option value="Screening clinic">Screening clinic</option>
-                                <option value="Security">Security</option>
-                                <option value="Social Workers/Psychology">Social Workers/Psychology</option>
-                                <option value="Solid Tumor Service">Solid Tumor Service</option>
-                                <option value="Surgeon">Surgeon</option>
-                                <option value="Surgical floor">Surgical floor</option>
-                                <option value="Surgical Service">Surgical Service</option>
-                                <option value="VAD">VAD</option>
-                                <option value="VIP">VIP</option>
-                                <option value="Waiting area">Waiting area</option>
+                                <option value="Adult BMT clinic" {% if event.department_unit_involved_2 == "Adult BMT clinic" %}selected{% endif %}>Adult BMT clinic</option>
+                                <option value="Adult Chemotherapy Unit" {% if event.department_unit_involved_2 == "Adult Chemotherapy Unit" %}selected{% endif %}>Adult Chemotherapy Unit</option>
+                                <option value="Adult ER" {% if event.department_unit_involved_2 == "Adult ER" %}selected{% endif %}>Adult ER</option>
+                                <option value="Anesthesia" {% if event.department_unit_involved_2 == "Anesthesia" %}selected{% endif %}>Anesthesia</option>
+                                <option value="Apheresis collection facility" {% if event.department_unit_involved_2 == "Apheresis collection facility" %}selected{% endif %}>Apheresis collection facility</option>
+                                <option value="Biomedical" {% if event.department_unit_involved_2 == "Biomedical" %}selected{% endif %}>Biomedical</option>
+                                <option value="BIU" {% if event.department_unit_involved_2 == "BIU" %}selected{% endif %}>BIU</option>
+                                <option value="Blood bank" {% if event.department_unit_involved_2 == "Blood bank" %}selected{% endif %}>Blood bank</option>
+                                <option value="BMT adult" {% if event.department_unit_involved_2 == "BMT adult" %}selected{% endif %}>BMT adult</option>
+                                <option value="BMT pediatric" {% if event.department_unit_involved_2 == "BMT pediatric" %}selected{% endif %}>BMT pediatric</option>
+                                <option value="Call center" {% if event.department_unit_involved_2 == "Call center" %}selected{% endif %}>Call center</option>
+                                <option value="Chemotherapy clinic" {% if event.department_unit_involved_2 == "Chemotherapy clinic" %}selected{% endif %}>Chemotherapy clinic</option>
+                                <option value="Clinical program" {% if event.department_unit_involved_2 == "Clinical program" %}selected{% endif %}>Clinical program</option>
+                                <option value="CMO office" {% if event.department_unit_involved_2 == "CMO office" %}selected{% endif %}>CMO office</option>
+                                <option value="Corridor" {% if event.department_unit_involved_2 == "Corridor" %}selected{% endif %}>Corridor</option>
+                                <option value="CTAG BMT LAB (Processing Facility)" {% if event.department_unit_involved_2 == "CTAG BMT LAB (Processing Facility)" %}selected{% endif %}>CTAG BMT LAB (Processing Facility)</option>
+                                <option value="Darwazah" {% if event.department_unit_involved_2 == "Darwazah" %}selected{% endif %}>Darwazah</option>
+                                <option value="Day case" {% if event.department_unit_involved_2 == "Day case" %}selected{% endif %}>Day case</option>
+                                <option value="Dialyses" {% if event.department_unit_involved_2 == "Dialyses" %}selected{% endif %}>Dialyses</option>
+                                <option value="Discharge planning office" {% if event.department_unit_involved_2 == "Discharge planning office" %}selected{% endif %}>Discharge planning office</option>
+                                <option value="Early detection clinic" {% if event.department_unit_involved_2 == "Early detection clinic" %}selected{% endif %}>Early detection clinic</option>
+                                <option value="Endoscopy" {% if event.department_unit_involved_2 == "Endoscopy" %}selected{% endif %}>Endoscopy</option>
+                                <option value="Entrance" {% if event.department_unit_involved_2 == "Entrance" %}selected{% endif %}>Entrance</option>
+                                <option value="General Adult Clinic" {% if event.department_unit_involved_2 == "General Adult Clinic" %}selected{% endif %}>General Adult Clinic</option>
+                                <option value="Home care" {% if event.department_unit_involved_2 == "Home care" %}selected{% endif %}>Home care</option>
+                                <option value="Hospice/ Palliative service" {% if event.department_unit_involved_2 == "Hospice/ Palliative service" %}selected{% endif %}>Hospice/ Palliative service</option>
+                                <option value="ICU" {% if event.department_unit_involved_2 == "ICU" %}selected{% endif %}>ICU</option>
+                                <option value="ICU-Medical" {% if event.department_unit_involved_2 == "ICU-Medical" %}selected{% endif %}>ICU-Medical</option>
+                                <option value="ICU-Pediatric" {% if event.department_unit_involved_2 == "ICU-Pediatric" %}selected{% endif %}>ICU-Pediatric</option>
+                                <option value="IMU" {% if event.department_unit_involved_2 == "IMU" %}selected{% endif %}>IMU</option>
+                                <option value="Infection control" {% if event.department_unit_involved_2 == "Infection control" %}selected{% endif %}>Infection control</option>
+                                <option value="Infusion unit" {% if event.department_unit_involved_2 == "Infusion unit" %}selected{% endif %}>Infusion unit</option>
+                                <option value="Inpatient Pharmacy" {% if event.department_unit_involved_2 == "Inpatient Pharmacy" %}selected{% endif %}>Inpatient Pharmacy</option>
+                                <option value="Internal medicine" {% if event.department_unit_involved_2 == "Internal medicine" %}selected{% endif %}>Internal medicine</option>
+                                <option value="International patient office" {% if event.department_unit_involved_2 == "International patient office" %}selected{% endif %}>International patient office</option>
+                                <option value="Interventional" {% if event.department_unit_involved_2 == "Interventional" %}selected{% endif %}>Interventional</option>
+                                <option value="IT" {% if event.department_unit_involved_2 == "IT" %}selected{% endif %}>IT</option>
+                                <option value="Kitchen" {% if event.department_unit_involved_2 == "Kitchen" %}selected{% endif %}>Kitchen</option>
+                                <option value="Laboratory" {% if event.department_unit_involved_2 == "Laboratory" %}selected{% endif %}>Laboratory</option>
+                                <option value="Laundry" {% if event.department_unit_involved_2 == "Laundry" %}selected{% endif %}>Laundry</option>
+                                <option value="Leukemia floor" {% if event.department_unit_involved_2 == "Leukemia floor" %}selected{% endif %}>Leukemia floor</option>
+                                <option value="Lung" {% if event.department_unit_involved_2 == "Lung" %}selected{% endif %}>Lung</option>
+                                <option value="Maintenance" {% if event.department_unit_involved_2 == "Maintenance" %}selected{% endif %}>Maintenance</option>
+                                <option value="Marrow collection facility" {% if event.department_unit_involved_2 == "Marrow collection facility" %}selected{% endif %}>Marrow collection facility</option>
+                                <option value="Material management" {% if event.department_unit_involved_2 == "Material management" %}selected{% endif %}>Material management</option>
+                                <option value="Medical floor" {% if event.department_unit_involved_2 == "Medical floor" %}selected{% endif %}>Medical floor</option>
+                                <option value="Medical Oncology Clinic" {% if event.department_unit_involved_2 == "Medical Oncology Clinic" %}selected{% endif %}>Medical Oncology Clinic</option>
+                                <option value="Medical records" {% if event.department_unit_involved_2 == "Medical records" %}selected{% endif %}>Medical records</option>
+                                <option value="Medical surgical" {% if event.department_unit_involved_2 == "Medical surgical" %}selected{% endif %}>Medical surgical</option>
+                                <option value="Non-KHCC location" {% if event.department_unit_involved_2 == "Non-KHCC location" %}selected{% endif %}>Non-KHCC location</option>
+                                <option value="Nuclear Medicine" {% if event.department_unit_involved_2 == "Nuclear Medicine" %}selected{% endif %}>Nuclear Medicine</option>
+                                <option value="Nursing" {% if event.department_unit_involved_2 == "Nursing" %}selected{% endif %}>Nursing</option>
+                                <option value="OR" {% if event.department_unit_involved_2 == "OR" %}selected{% endif %}>OR</option>
+                                <option value="Out KHCC" {% if event.department_unit_involved_2 == "Out KHCC" %}selected{% endif %}>Out KHCC</option>
+                                <option value="Out reach mobile BIU" {% if event.department_unit_involved_2 == "Out reach mobile BIU" %}selected{% endif %}>Out reach mobile BIU</option>
+                                <option value="Outpatient clinic" {% if event.department_unit_involved_2 == "Outpatient clinic" %}selected{% endif %}>Outpatient clinic</option>
+                                <option value="Outpatient Pharmacy" {% if event.department_unit_involved_2 == "Outpatient Pharmacy" %}selected{% endif %}>Outpatient Pharmacy</option>
+                                <option value="Palliative Clinic" {% if event.department_unit_involved_2 == "Palliative Clinic" %}selected{% endif %}>Palliative Clinic</option>
+                                <option value="Patient affair office" {% if event.department_unit_involved_2 == "Patient affair office" %}selected{% endif %}>Patient affair office</option>
+                                <option value="Patient application" {% if event.department_unit_involved_2 == "Patient application" %}selected{% endif %}>Patient application</option>
+                                <option value="Patient complain office" {% if event.department_unit_involved_2 == "Patient complain office" %}selected{% endif %}>Patient complain office</option>
+                                <option value="Pediatric BMT clinic" {% if event.department_unit_involved_2 == "Pediatric BMT clinic" %}selected{% endif %}>Pediatric BMT clinic</option>
+                                <option value="Pediatric Chemotherapy" {% if event.department_unit_involved_2 == "Pediatric Chemotherapy" %}selected{% endif %}>Pediatric Chemotherapy</option>
+                                <option value="Pediatric Clinic" {% if event.department_unit_involved_2 == "Pediatric Clinic" %}selected{% endif %}>Pediatric Clinic</option>
+                                <option value="Pediatric ER" {% if event.department_unit_involved_2 == "Pediatric ER" %}selected{% endif %}>Pediatric ER</option>
+                                <option value="Pediatric floor" {% if event.department_unit_involved_2 == "Pediatric floor" %}selected{% endif %}>Pediatric floor</option>
+                                <option value="Pediatric surgery" {% if event.department_unit_involved_2 == "Pediatric surgery" %}selected{% endif %}>Pediatric surgery</option>
+                                <option value="Pediatrics Service" {% if event.department_unit_involved_2 == "Pediatrics Service" %}selected{% endif %}>Pediatrics Service</option>
+                                <option value="Pharmacy" {% if event.department_unit_involved_2 == "Pharmacy" %}selected{% endif %}>Pharmacy</option>
+                                <option value="Physician" {% if event.department_unit_involved_2 == "Physician" %}selected{% endif %}>Physician</option>
+                                <option value="Physiotherapy" {% if event.department_unit_involved_2 == "Physiotherapy" %}selected{% endif %}>Physiotherapy</option>
+                                <option value="Play therapy room" {% if event.department_unit_involved_2 == "Play therapy room" %}selected{% endif %}>Play therapy room</option>
+                                <option value="Purchasing" {% if event.department_unit_involved_2 == "Purchasing" %}selected{% endif %}>Purchasing</option>
+                                <option value="Quality Management" {% if event.department_unit_involved_2 == "Quality Management" %}selected{% endif %}>Quality Management</option>
+                                <option value="Radiology" {% if event.department_unit_involved_2 == "Radiology" %}selected{% endif %}>Radiology</option>
+                                <option value="Radiotherapy" {% if event.department_unit_involved_2 == "Radiotherapy" %}selected{% endif %}>Radiotherapy</option>
+                                <option value="Radiotherapy technician" {% if event.department_unit_involved_2 == "Radiotherapy technician" %}selected{% endif %}>Radiotherapy technician</option>
+                                <option value="Respiratory therapy" {% if event.department_unit_involved_2 == "Respiratory therapy" %}selected{% endif %}>Respiratory therapy</option>
+                                <option value="Safety" {% if event.department_unit_involved_2 == "Safety" %}selected{% endif %}>Safety</option>
+                                <option value="Screening clinic" {% if event.department_unit_involved_2 == "Screening clinic" %}selected{% endif %}>Screening clinic</option>
+                                <option value="Security" {% if event.department_unit_involved_2 == "Security" %}selected{% endif %}>Security</option>
+                                <option value="Social Workers/Psychology" {% if event.department_unit_involved_2 == "Social Workers/Psychology" %}selected{% endif %}>Social Workers/Psychology</option>
+                                <option value="Solid Tumor Service" {% if event.department_unit_involved_2 == "Solid Tumor Service" %}selected{% endif %}>Solid Tumor Service</option>
+                                <option value="Surgeon" {% if event.department_unit_involved_2 == "Surgeon" %}selected{% endif %}>Surgeon</option>
+                                <option value="Surgical floor" {% if event.department_unit_involved_2 == "Surgical floor" %}selected{% endif %}>Surgical floor</option>
+                                <option value="Surgical Service" {% if event.department_unit_involved_2 == "Surgical Service" %}selected{% endif %}>Surgical Service</option>
+                                <option value="VAD" {% if event.department_unit_involved_2 == "VAD" %}selected{% endif %}>VAD</option>
+                                <option value="VIP" {% if event.department_unit_involved_2 == "VIP" %}selected{% endif %}>VIP</option>
+                                <option value="Waiting area" {% if event.department_unit_involved_2 == "Waiting area" %}selected{% endif %}>Waiting area</option>
                             </select>
                         </div>
                     </div>
@@ -541,16 +534,16 @@
                             <label class="form-label">Initial Scoring</label>
                             <select name="initial_scoring" class="form-select" required>
                                 <option value="">Select Initial Score</option>
-                                <option value="A">A</option>
-                                <option value="B">B</option>
-                                <option value="C">C</option>
-                                <option value="D">D</option>
-                                <option value="E">E</option>
-                                <option value="F">F</option>
-                                <option value="G">G</option>
-                                <option value="H">H</option>
-                                <option value="I">I</option>
-                                <option value="No score">No score</option>
+                                <option value="A" {% if event.initial_scoring == "A" %}selected{% endif %}>A</option>
+                                <option value="B" {% if event.initial_scoring == "B" %}selected{% endif %}>B</option>
+                                <option value="C" {% if event.initial_scoring == "C" %}selected{% endif %}>C</option>
+                                <option value="D" {% if event.initial_scoring == "D" %}selected{% endif %}>D</option>
+                                <option value="E" {% if event.initial_scoring == "E" %}selected{% endif %}>E</option>
+                                <option value="F" {% if event.initial_scoring == "F" %}selected{% endif %}>F</option>
+                                <option value="G" {% if event.initial_scoring == "G" %}selected{% endif %}>G</option>
+                                <option value="H" {% if event.initial_scoring == "H" %}selected{% endif %}>H</option>
+                                <option value="I" {% if event.initial_scoring == "I" %}selected{% endif %}>I</option>
+                                <option value="No score" {% if event.initial_scoring == "No score" %}selected{% endif %}>No score</option>
                             </select>
                         </div>
                     </div>
@@ -559,13 +552,20 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label">Supervisor Name</label>
-                            <input type="text" name="supervisor_name" class="form-control" required>
+                            <input type="text" 
+                                   name="supervisor_name" 
+                                   class="form-control" 
+                                   value="{{ event.supervisor_name|default:'' }}"
+                                   required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label">Supervisor Email</label>
-                            <input type="email" name="supervisor_email" class="form-control">
+                            <input type="email" 
+                                   name="supervisor_email" 
+                                   class="form-control" 
+                                   value="{{ event.supervisor_email|default:'' }}">
                         </div>
                     </div>
                 </div>
@@ -585,15 +585,24 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <label class="form-label">Primary Category</label>
-                                    <select class="form-select primary-category" name="primary_categories[]" required>
+                                    <select class="form-select primary-category" name="primary_category" required>
                                         <option value="">Select Primary Category</option>
+                                        <option value="medication_related" {% if event.medication_related %}selected{% endif %}>Medication</option>
+                                        <option value="iv_blood_related" {% if event.iv_blood_related %}selected{% endif %}>I.V. Blood Related</option>
+                                        <option value="laboratory_related" {% if event.laboratory_related %}selected{% endif %}>Laboratory Related</option>
+                                        <option value="surgery_related" {% if event.surgery_related %}selected{% endif %}>Surgery/Invasive Procedure Related</option>
+                                        <option value="documentation_related" {% if event.documentation_related %}selected{% endif %}>Documentation</option>
+                                        <option value="equipment_related" {% if event.equipment_related %}selected{% endif %}>Equipment</option>
+                                        <option value="patient_safety_related" {% if event.patient_safety_related %}selected{% endif %}>Safety</option>
+                                        <option value="admission_related" {% if event.admission_related %}selected{% endif %}>Admission Discharge</option>
                                     </select>
                                 </div>
                                 <div class="col-md-5">
                                     <label class="form-label subcategory-header">Select Subcategory</label>
-                                    <select class="form-select subcategory" name="subcategories[]" required>
+                                    <select class="form-select subcategory" name="subcategory" required>
                                         <option value="">Select Subcategory</option>
                                     </select>
+                                    <input type="hidden" class="category-value" name="category_value">
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">&nbsp;</label>
@@ -619,6 +628,99 @@
                 </div>
             </div>
         </div>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize with existing categories
+            const existingCategories = [
+                {% for category in event.get_categories %}
+                    {
+                        type: "{{ category.type }}",
+                        subcategory: "{{ category.subcategory }}"
+                    },
+                {% endfor %}
+            ];
+
+            console.log("Existing categories:", existingCategories);
+
+            // Add initial rows for existing categories
+            existingCategories.forEach(category => {
+                addCategoryRow(category.type, category.subcategory);
+            });
+
+            // If no categories exist, add one empty row
+            if (!document.querySelector('.category-row')) {
+                addCategoryRow();
+            }
+        });
+
+        // Update form submit handler
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get all category rows
+            const categoryRows = document.querySelectorAll('.category-row');
+            
+            categoryRows.forEach((row, index) => {
+                const primarySelect = row.querySelector('.primary-category');
+                const subcategorySelect = row.querySelector('.subcategory');
+                
+                if (primarySelect.value && subcategorySelect.value) {
+                    // Create hidden inputs with array notation
+                    const typeInput = document.createElement('input');
+                    typeInput.type = 'hidden';
+                    typeInput.name = 'primary_category';
+                    typeInput.value = primarySelect.value;
+                    
+                    const subInput = document.createElement('input');
+                    subInput.type = 'hidden';
+                    subInput.name = 'subcategory';
+                    subInput.value = subcategorySelect.value;
+                    
+                    this.appendChild(typeInput);
+                    this.appendChild(subInput);
+                }
+            });
+
+            this.submit();
+        });
+
+        function addCategoryRow(selectedCategory = '', selectedSubcategory = '') {
+            const template = document.getElementById('category-template');
+            const container = document.getElementById('categories-container');
+            const clone = template.content.cloneNode(true);
+            
+            const primarySelect = clone.querySelector('.primary-category');
+            const subcategorySelect = clone.querySelector('.subcategory');
+            const categoryValue = clone.querySelector('.category-value');
+            
+            // Set initial values if provided
+            if (selectedCategory) {
+                primarySelect.value = selectedCategory;
+                updateSubcategories(primarySelect, subcategorySelect);
+                if (selectedSubcategory) {
+                    subcategorySelect.value = selectedSubcategory;
+                    categoryValue.value = selectedSubcategory;
+                }
+            }
+            
+            // Add event listeners
+            primarySelect.addEventListener('change', function() {
+                updateSubcategories(this, subcategorySelect);
+                categoryValue.value = '';
+            });
+            
+            subcategorySelect.addEventListener('change', function() {
+                categoryValue.value = this.value;
+            });
+            
+            clone.querySelector('.remove-category').addEventListener('click', function() {
+                this.closest('.category-row').remove();
+            });
+            
+            container.appendChild(clone);
+        }
+        </script>
 
         <!-- Add this section before the Description and Actions card -->
         <div class="card mb-4">
@@ -2000,7 +2102,101 @@ document.querySelector('form[method="post"]').addEventListener('submit', functio
         console.log(`${key}: ${value}`);
     }
 });
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize with existing categories
+    const existingCategories = {
+        medication_related: "{{ event.medication_related|default:'' }}",
+        iv_blood_related: "{{ event.iv_blood_related|default:'' }}",
+        laboratory_related: "{{ event.laboratory_related|default:'' }}",
+        surgery_related: "{{ event.surgery_related|default:'' }}",
+        documentation_related: "{{ event.documentation_related|default:'' }}",
+        equipment_related: "{{ event.equipment_related|default:'' }}",
+        patient_safety_related: "{{ event.patient_safety_related|default:'' }}",
+        admission_related: "{{ event.admission_related|default:'' }}"
+    };
 
+    console.log("Existing categories:", existingCategories);
+
+    // Add form submit handler
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Get all category rows
+        const categoryRows = document.querySelectorAll('.category-row');
+        const categories = {};
+
+        categoryRows.forEach(row => {
+            const primarySelect = row.querySelector('.primary-category');
+            const subcategorySelect = row.querySelector('.subcategory');
+            
+            if (primarySelect.value && subcategorySelect.value) {
+                // Create hidden input for each category
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = primarySelect.value;  // This will be medication_related, iv_blood_related, etc.
+                input.value = subcategorySelect.value;
+                this.appendChild(input);
+            }
+        });
+
+        console.log("Submitting form with categories:", categories);
+        this.submit();
+    });
+
+    // Add initial rows for existing categories
+    for (const [field, value] of Object.entries(existingCategories)) {
+        if (value) {
+            console.log(`Adding row for ${field} with value ${value}`);
+            addCategoryRow(field, value);
+        }
+    }
+
+    // If no categories exist, add one empty row
+    if (!document.querySelector('.category-row')) {
+        addCategoryRow();
+    }
+
+    // Add Category Button handler
+    document.getElementById('add-category').addEventListener('click', function() {
+        addCategoryRow();
+    });
+});
+// Add this to your existing JavaScript in event_form.html
+document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Get all category rows
+    const categoryRows = document.querySelectorAll('.category-row');
+    
+    // Remove any existing hidden category inputs
+    this.querySelectorAll('input[name^="category_"]').forEach(el => el.remove());
+
+    // Add hidden inputs for each category
+    categoryRows.forEach(row => {
+        const primarySelect = row.querySelector('.primary-category');
+        const subcategorySelect = row.querySelector('.subcategory');
+        
+        if (primarySelect.value && subcategorySelect.value) {
+            // Create hidden input for the category
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = primarySelect.value;  // e.g., medication_related
+            input.value = subcategorySelect.value;
+            this.appendChild(input);
+
+            console.log(`Adding category: ${primarySelect.value} = ${subcategorySelect.value}`);
+        }
+    });
+
+    // Log all form data before submitting
+    const formData = new FormData(this);
+    console.log('Submitting form with data:');
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+
+    this.submit();
+});
 document.addEventListener('DOMContentLoaded', function() {
     const pendingToggle = document.getElementById('pendingToggle');
     const mainForm = document.querySelector('form[method="post"]');

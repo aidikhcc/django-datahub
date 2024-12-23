@@ -1,0 +1,212 @@
+{% extends 'registries/bmt/base.html' %}
+
+{% block bmt_content %}
+<div class="container-fluid">
+    <!-- Filter Card -->
+    <div class="card mb-4">
+        <div class="card-header py-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="#filterCollapse" 
+                   class="text-decoration-none text-dark d-flex align-items-center" 
+                   data-bs-toggle="collapse" 
+                   role="button" 
+                   aria-expanded="false" 
+                   aria-controls="filterCollapse">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-filter me-2"></i>Filters
+                    </h6>
+                    <i class="fas fa-chevron-down ms-2 small"></i>
+                </a>
+                <div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary me-2" onclick="clearFilters()">
+                        <i class="fas fa-undo small"></i>
+                    </button>
+                    <button type="submit" form="filterForm" class="btn btn-sm btn-outline-primary">Apply</button>
+                </div>
+            </div>
+        </div>
+        <div class="collapse" id="filterCollapse">
+            <div class="card-body py-2">
+                <form id="filterForm" class="row g-2" method="GET">
+                    <!-- Search Fields -->
+                    <div class="col-md-2">
+                        <label class="form-label small">MRN</label>
+                        {{ search_form.mrn }}
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Transplant Number</label>
+                        {{ search_form.transplant_number }}
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Service</label>
+                        <select name="service" class="form-select">
+                            <option value="">All</option>
+                            <option value="Adult Service">Adult Service</option>
+                            <option value="Pediatric Service">Pediatric Service</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Date Range</label>
+                        <div class="input-group input-group-sm">
+                            <input type="date" name="date_from" class="form-control">
+                            <span class="input-group-text">to</span>
+                            <input type="date" name="date_to" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registry List -->
+    <div class="card">
+        <div class="card-header py-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">BMT Registry Entries</h5>
+                <div>
+                    <a href="?export=csv" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-download me-1"></i>Export to CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="registryTable">
+                    <thead>
+                        <tr>
+                            <th>MRN</th>
+                            <th>Patient Name</th>
+                            <th>Transplant #</th>
+                            <th>Service</th>
+                            <th>Diagnosis</th>
+                            <th>Transplant Date</th>
+                            <th>Last Follow-up</th>
+                            <th>Next Follow-up</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registry in registries %}
+                        <tr>
+                            <td>{{ registry.MRN }}</td>
+                            <td>{{ registry.patient_name }}</td>
+                            <td>{{ registry.transplant_number }}</td>
+                            <td>{{ registry.service }}</td>
+                            <td>{{ registry.diagnosis }}</td>
+                            <td>{{ registry.transplant_date|date:"Y-m-d" }}</td>
+                            <td>{{ registry.last_followup_date|date:"Y-m-d"|default:"-" }}</td>
+                            <td>{{ registry.next_followup_date|date:"Y-m-d"|default:"-" }}</td>
+                            <td>
+                                <span class="badge {% if registry.Patient_Status == 'Alive' %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ registry.Patient_Status }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'registries:bmt_form_edit' registry.MRN registry.transplant_number %}" 
+                                       class="btn btn-sm btn-outline-primary" 
+                                       title="Edit Record">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="10" class="text-center">No registry entries found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if registries.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-3">
+                <ul class="pagination justify-content-center">
+                    {% if registries.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ registries.previous_page_number }}">Previous</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in registries.paginator.page_range %}
+                    <li class="page-item {% if registries.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if registries.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ registries.next_page_number }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.table th {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.table td {
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+.btn-group .btn {
+    padding: 0.25rem 0.5rem;
+}
+
+.pagination {
+    margin-bottom: 0;
+}
+
+.page-link {
+    padding: 0.375rem 0.75rem;
+}
+
+.form-label.small {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+    color: #6c757d;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize DataTable
+    const table = $('#registryTable').DataTable({
+        pageLength: 25,
+        order: [[5, 'desc']], // Sort by transplant date by default
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip'
+    });
+
+    // Add filter functionality
+    $('#statusFilter, #serviceFilter').on('change', function() {
+        table.draw();
+    });
+
+    $('#searchInput').on('keyup', function() {
+        table.search(this.value).draw();
+    });
+});
+
+function clearFilters() {
+    const form = document.getElementById('filterForm');
+    form.reset();
+    form.submit();
+}
+</script>
+{% endblock %} 

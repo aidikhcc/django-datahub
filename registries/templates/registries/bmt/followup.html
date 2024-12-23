@@ -1,0 +1,250 @@
+{% extends 'registries/bmt/base.html' %}
+
+{% block bmt_content %}
+<div class="container-fluid">
+    <!-- Header with Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Due This Week</h6>
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-day me-2 text-warning"></i>
+                        <span class="badge bg-warning">{{ due_this_week }}</span>
+                    </h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Due This Month</h6>
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-week me-2 text-info"></i>
+                        <span class="badge bg-info">{{ due_this_month }}</span>
+                    </h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Overdue</h6>
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-circle me-2 text-danger"></i>
+                        <span class="badge bg-danger">{{ overdue }}</span>
+                    </h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total Active</h6>
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-check me-2 text-success"></i>
+                        <span class="badge bg-success">{{ total_active }}</span>
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Follow-up List -->
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Follow-up Schedule</h5>
+                <div>
+                    <a href="?export=csv" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-download me-1"></i>Export List
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Filters -->
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <select class="form-select form-select-sm" id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="due">Due</option>
+                        <option value="overdue">Overdue</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select form-select-sm" id="serviceFilter">
+                        <option value="">All Services</option>
+                        <option value="Adult Service">Adult Service</option>
+                        <option value="Pediatric Service">Pediatric Service</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control form-control-sm" placeholder="Search MRN/Name" id="searchInput">
+                </div>
+            </div>
+
+            <!-- Follow-up Table -->
+            <div class="table-responsive">
+                <table class="table table-hover" id="followupTable">
+                    <thead>
+                        <tr>
+                            <th>MRN</th>
+                            <th>Patient Name</th>
+                            <th>Service</th>
+                            <th>Last Follow-up</th>
+                            <th>Next Due Date</th>
+                            <th>Days Until/Overdue</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for followup in followups %}
+                        <tr class="{% if followup.is_overdue %}table-danger{% elif followup.is_due_soon %}table-warning{% endif %}">
+                            <td>{{ followup.MRN }}</td>
+                            <td>{{ followup.Patient_name }}</td>
+                            <td>{{ followup.Service }}</td>
+                            <td>{{ followup.Last_Follow_up_date|date:"Y-m-d" }}</td>
+                            <td>{{ followup.Next_Follow_up_Due_Date|date:"Y-m-d" }}</td>
+                            <td>
+                                {% if followup.days_until > 0 %}
+                                    <span class="text-muted">{{ followup.days_until }} days</span>
+                                {% else %}
+                                    <span class="text-danger">{{ followup.days_until|abs }} days overdue</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge {% if followup.is_overdue %}bg-danger{% elif followup.is_due_soon %}bg-warning{% else %}bg-success{% endif %}">
+                                    {% if followup.is_overdue %}
+                                        Overdue
+                                    {% elif followup.is_due_soon %}
+                                        Due Soon
+                                    {% else %}
+                                        Scheduled
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'registries:bmt_form_edit' followup.MRN followup.Number_of_Transplant %}" 
+                                       class="btn btn-sm btn-outline-primary" 
+                                       title="Edit Record">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" 
+                                            class="btn btn-sm btn-outline-success"
+                                            onclick="markCompleted('{{ followup.MRN }}', '{{ followup.Number_of_Transplant }}')"
+                                            title="Mark as Completed">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">No follow-ups scheduled</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if followups.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-3">
+                <ul class="pagination justify-content-center">
+                    {% if followups.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ followups.previous_page_number }}">Previous</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in followups.paginator.page_range %}
+                    <li class="page-item {% if followups.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if followups.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ followups.next_page_number }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1rem;
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.table td {
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+.btn-group .btn {
+    padding: 0.25rem 0.5rem;
+}
+
+.form-select-sm, .form-control-sm {
+    font-size: 0.875rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize DataTable
+    const table = $('#followupTable').DataTable({
+        pageLength: 25,
+        order: [[4, 'asc']], // Sort by next due date
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip'
+    });
+
+    // Add filter functionality
+    $('#statusFilter, #serviceFilter').on('change', function() {
+        table.draw();
+    });
+
+    $('#searchInput').on('keyup', function() {
+        table.search(this.value).draw();
+    });
+});
+
+function markCompleted(mrn, transplantNumber) {
+    if (confirm('Mark this follow-up as completed?')) {
+        fetch(`/registries/bmt/followup/complete/${mrn}/${transplantNumber}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error updating follow-up status');
+            }
+        });
+    }
+}
+</script>
+{% endblock %} 

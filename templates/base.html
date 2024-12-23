@@ -299,66 +299,76 @@
     </style>
     {% block page_css %}{% endblock %}
 </head>
-<body class="{% if request.resolver_match.url_name != 'home' %}has-sidebar{% endif %}">
-    {% if request.resolver_match.url_name != 'home' %}
-    <div class="sidebar">
-        <div class="logo-container">
-            <a href="{% url 'home' %}">
-                <img src="{% static 'images/logo.png' %}" alt="KHCC Logo">
-            </a>
-        </div>
-        <div class="nav-container">
-            <ul class="sidebar-nav">
-                {% if user.is_authenticated %}
-                    {% if perms.kpi_tracker.view_breast_kpi %}
+<body class="{% if '/kpi/' in request.path or '/events/' in request.path %}has-sidebar{% endif %}">
+    {% if '/kpi/' in request.path or '/events/' in request.path %}
+        <div class="sidebar">
+            <div class="logo-container">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'images/logo.png' %}" alt="KHCC Logo">
+                </a>
+            </div>
+            <div class="nav-container">
+                <ul class="sidebar-nav">
+                    <!-- Home link always shows -->
                     <li class="sidebar-nav-item">
-                        <a href="{% url 'kpi_tracker:breast_form' %}" 
-                           class="sidebar-nav-link {% if 'breast' in request.path %}active{% endif %}">
-                            <i class="fas fa-notes-medical me-2"></i>Breast Cancer
+                        <a href="{% url 'home' %}" class="sidebar-nav-link">
+                            <i class="fas fa-home me-2"></i>Home
                         </a>
                     </li>
+
+                    {% if '/kpi/' in request.path %}
+                        <!-- KPI Disease Links -->
+                        <li class="sidebar-nav-item">
+                            <a href="{% url 'kpi_tracker:kpi_home' %}" 
+                               class="sidebar-nav-link {% if 'kpi_tracker' in request.path and 'breast' not in request.path %}active{% endif %}">
+                                <i class="fas fa-chart-line me-2"></i>KPI Home
+                            </a>
+                        </li>
+                        
+                        <li class="sidebar-nav-item">
+                            <a href="{% url 'kpi_tracker:breast_kpi_dashboard' %}" 
+                               class="sidebar-nav-link {% if 'breast' in request.path %}active{% endif %}">
+                                <i class="fas fa-heartbeat me-2"></i>Breast Cancer KPI
+                            </a>
+                        </li>
                     {% endif %}
 
-                    {% if perms.event_reporting.view_all_events %}
-                    <li class="sidebar-nav-item">
-                        <a href="{% url 'event_reporting:event_list' %}" 
-                           class="sidebar-nav-link {% if 'event/list' in request.path %}active{% endif %}">
-                            <i class="fas fa-list me-2"></i>All Events
-                        </a>
-                    </li>
-                    {% endif %}
+                    {% if '/events/' in request.path %}
+                        <!-- Event Reporting Links -->
+                        <li class="sidebar-nav-item">
+                            <a href="{% url 'event_reporting:event_list' %}" 
+                               class="sidebar-nav-link {% if 'event/list' in request.path %}active{% endif %}">
+                                <i class="fas fa-list me-2"></i>All Events
+                            </a>
+                        </li>
 
-                    {% if perms.event_reporting.view_qmo_dashboard %}
-                    <li class="sidebar-nav-item">
-                        <a href="{% url 'event_reporting:qmo_dashboard' %}" 
-                           class="sidebar-nav-link {% if 'qmo-dashboard' in request.path %}active{% endif %}">
-                            <i class="fas fa-chart-line me-2"></i>QMO Dashboard
-                        </a>
-                    </li>
-                    {% endif %}
+                        <li class="sidebar-nav-item">
+                            <a href="{% url 'event_reporting:qmo_dashboard' %}" 
+                               class="sidebar-nav-link {% if 'qmo-dashboard' in request.path %}active{% endif %}">
+                                <i class="fas fa-chart-line me-2"></i>QMO Dashboard
+                            </a>
+                        </li>
 
-                    {% if perms.event_reporting.export_reports %}
-                    <li class="sidebar-nav-item">
-                        <a href="{% url 'event_reporting:export_reports' %}" 
-                           class="sidebar-nav-link {% if 'export' in request.path %}active{% endif %}">
-                            <i class="fas fa-file-export me-2"></i>Export Reports
-                        </a>
-                    </li>
+                        <li class="sidebar-nav-item">
+                            <a href="{% url 'event_reporting:export_reports' %}" 
+                               class="sidebar-nav-link {% if 'export' in request.path %}active{% endif %}">
+                                <i class="fas fa-file-export me-2"></i>Export Reports
+                            </a>
+                        </li>
                     {% endif %}
-                {% endif %}
-            </ul>
+                </ul>
+            </div>
+            {% if user.is_authenticated %}
+            <div class="user-info">
+                Welcome, {{ user.username }}
+            </div>
+            {% endif %}
+            <div class="sidebar-footer">
+                <small class="text-muted">
+                    <i class="fas fa-code me-1"></i> Developed by AIDI @ KHCC
+                </small>
+            </div>
         </div>
-        {% if user.is_authenticated %}
-        <div class="user-info">
-            Welcome, {{ user.username }}
-        </div>
-        {% endif %}
-        <div class="sidebar-footer">
-            <small class="text-muted">
-                <i class="fas fa-code me-1"></i> Developed by AIDI @ KHCC
-            </small>
-        </div>
-    </div>
     {% endif %}
 
     <div class="main-content">
@@ -410,7 +420,6 @@
     {% block page_js %}{% endblock %}
 
     <!-- Update the footer HTML -->
-    {% if not request.resolver_match.url_name != 'home' %}
     <footer class="footer">
         <div class="container-fluid text-center">
             <small class="text-muted">
@@ -418,6 +427,5 @@
             </small>
         </div>
     </footer>
-    {% endif %}
 </body>
 </html> 

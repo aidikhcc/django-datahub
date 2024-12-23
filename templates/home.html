@@ -50,6 +50,23 @@
                 </div>
             </div>
         </div>
+
+        <!-- BMT Registry Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">BMT Registry</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Track and manage bone marrow transplant cases and outcomes.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'registries:bmt_home' %}" class="btn btn-primary">
+                            Access BMT Registry
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     {% if not user.is_authenticated %}
