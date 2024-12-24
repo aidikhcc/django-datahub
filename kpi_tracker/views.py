@@ -28,6 +28,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count, Avg, F, ExpressionWrapper, DurationField
 from django.utils import timezone
 import csv
+import msal
+import uuid
 
 User = get_user_model()
 
@@ -817,3 +819,49 @@ def kpi_home(request):
     View function for the KPI Disease Management home page.
     """
     return render(request, 'kpi_tracker/home.html')
+
+def login(request):
+    # Generate and store state and nonce for security
+    state = str(uuid.uuid4())
+    nonce = str(uuid.uuid4())
+    request.session['state'] = state
+    request.session['nonce'] = nonce
+    
+    # Configure MSAL client
+    msal_app = msal.ConfidentialClientApplication(
+        settings.AZURE_AD_AUTH['CLIENT_ID'],
+        authority=settings.AZURE_AD_AUTH['AUTHORITY'],
+        client_credential=settings.AZURE_AD_AUTH['CLIENT_SECRET'],
+    )
+    
+    # Get the authorization request URL
+    auth_url = msal_app.get_authorization_request_url(
+        scopes=settings.AZURE_AD_AUTH['SCOPE'],
+        state=state,
+        nonce=nonce,
+        redirect_uri=settings.AZURE_AD_AUTH['REDIRECT_URI'],
+        response_type=settings.AZURE_AD_AUTH['RESPONSE_TYPE'],
+        response_mode=settings.AZURE_AD_AUTH['RESPONSE_MODE']
+    )
+    
+    return redirect(auth_url)
+
+def oauth2_callback(request):
+    if request.GET.get('state') != request.session.get('state'):
+        return HttpResponseForbidden()
+    
+    if 'error' in request.GET:
+        return HttpResponseBadRequest(request.GET['error'])
+    
+    try:
+        code = request.GET.get('code')
+        user = authenticate(request, code=code)
+        if user is not None:
+            login(request, user)
+            # Redirect to the next URL if available, otherwise to home
+            next_url = request.session.get('next', '/')
+            return redirect(next_url)
+    except Exception as e:
+        return HttpResponseServerError(str(e))
+    
+    return HttpResponseRedirect('/')

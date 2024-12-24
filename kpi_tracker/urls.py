@@ -6,8 +6,8 @@ app_name = 'kpi_tracker'
 
 urlpatterns = [
     # Authentication URLs
-    path('login/', views.login_view, name='login'),
-    path('oauth2/callback/', views.auth_callback, name='auth_callback'),
+    path('login/', views.login, name='login'),
+    path('oauth2/callback/', views.oauth2_callback, name='oauth2_callback'),
     
     # KPI Disease Management home
     path('', views.kpi_home, name='kpi_home'),
