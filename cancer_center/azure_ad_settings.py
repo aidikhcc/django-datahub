@@ -6,7 +6,10 @@ AZURE_AD = {
     'CLIENT_SECRET': os.getenv('AZURE_AD_CLIENT_SECRET'),
     'AUTHORITY': f'https://login.microsoftonline.com/{os.getenv("AZURE_AD_TENANT_ID")}',
     'REDIRECT_URI': 'https://khcc-datahub.azurewebsites.net/oauth2/callback',
-    'SCOPE': ['User.Read', 'profile', 'email', 'openid'],
+    'SCOPE': [
+        'https://graph.microsoft.com/User.Read',
+        'https://graph.microsoft.com/email',
+    ],
     'LOGOUT_URI': 'https://khcc-datahub.azurewebsites.net/',
     'RESPONSE_TYPE': 'code',
     'RESPONSE_MODE': 'query'
