@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from .models import BreastKPI, KPIActivityLog
@@ -858,7 +859,7 @@ def oauth2_callback(request):
         code = request.GET.get('code')
         user = authenticate(request, code=code)
         if user is not None:
-            login(request, user)
+            auth_login(request, user)
             # Redirect to the next URL if available, otherwise to home
             next_url = request.session.get('next', '/')
             return redirect(next_url)
