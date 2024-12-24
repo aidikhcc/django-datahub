@@ -30,6 +30,8 @@ ALLOWED_HOSTS = [
     'khcc-datahub.azurewebsites.net',
     'localhost',
     '127.0.0.1',
+    '169.254.131.6',
+    '*',
 ]
 
 INSTALLED_APPS = [
