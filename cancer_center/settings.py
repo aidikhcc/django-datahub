@@ -26,7 +26,11 @@ LOGGING = {
     },
 }
 
-ALLOWED_HOSTS = ['khcc-datahub.azurewebsites.net']
+ALLOWED_HOSTS = [
+    'khcc-datahub.azurewebsites.net',
+    'localhost',
+    '127.0.0.1',
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -197,13 +201,14 @@ SITE_ID = 1
 # Update Auth settings
 AUTH_USER_MODEL = 'kpi_tracker.User'
 
-# Security settings for production
-SECURE_SSL_REDIRECT = True
+# Security settings for production - Modified to fix redirect loop
+SECURE_SSL_REDIRECT = False
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
-SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
