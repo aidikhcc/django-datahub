@@ -88,11 +88,11 @@ WSGI_APPLICATION = 'cancer_center.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'mssql',
-        'NAME': 'AIDI-DB',
-        'HOST': 'aidi-db-server.database.windows.net',
-        'PORT': '1433',
-        'USER': 'aidiadmin',
-        'PASSWORD': 'KhCc@2024!',
+        'NAME': os.getenv('DB_NAME', 'AIDI-DB'),
+        'HOST': os.getenv('DB_HOST', 'aidi-db-server.database.windows.net'),
+        'PORT': os.getenv('DB_PORT', '1433'),
+        'USER': os.getenv('DB_USER', 'aidiadmin'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
             'MARS_Connection': 'True',
