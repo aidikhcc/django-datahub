@@ -18,11 +18,24 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'level': 'INFO',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
         },
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG',
+        'level': 'INFO',
     },
 }
 
@@ -101,6 +114,11 @@ DATABASES = {
             'CONNECTION_TIMEOUT': 30,
             'driver_supports_utf8': True,
             'unicode_results': True,
+        },
+        'CONN_MAX_AGE': 60,
+        'OPTIONS': {
+            'connection_timeout': 60,
+            'command_timeout': 60,
         },
     }
 }
@@ -219,6 +237,19 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
 # Add session settings
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+SESSION_CACHE_ALIAS = 'default'
 SESSION_COOKIE_AGE = 86400  # 24 hours in seconds
 SESSION_COOKIE_SECURE = True  # Since we're using HTTPS
+
+# Cache settings
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# Memory optimization
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB
